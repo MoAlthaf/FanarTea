@@ -30,11 +30,14 @@ def test_root_endpoint():
     """Test the root endpoint (GET /)"""
     print("\n=== Testing Root Endpoint ===")
     try:
-        response = requests.get(f"{BACKEND_URL}")
+        response = requests.get(f"{BACKEND_URL}/api")
         
         if response.status_code == 200:
             print(f"✅ Root endpoint returned status code {response.status_code}")
-            print(f"Response: {response.json()}")
+            try:
+                print(f"Response: {response.json()}")
+            except:
+                print(f"Response: {response.text}")
             test_results["root_endpoint"]["status"] = "Passed"
             test_results["root_endpoint"]["details"] = "Root endpoint returned 200 status code"
             return True
