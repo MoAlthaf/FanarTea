@@ -1,75 +1,140 @@
-from fastapi import FastAPI, APIRouter
-from dotenv import load_dotenv
-from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List, Optional
 import os
-import logging
-from pathlib import Path
-from pydantic import BaseModel, Field
-from typing import List
+from pymongo import MongoClient
 import uuid
-from datetime import datetime
 
-
-ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
-
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
-
-# Create the main app without a prefix
 app = FastAPI()
 
-# Create a router with the /api prefix
-api_router = APIRouter(prefix="/api")
-
-
-# Define Models
-class StatusCheck(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
-
-class StatusCheckCreate(BaseModel):
-    client_name: str
-
-# Add your routes to the router instead of directly to app
-@api_router.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.dict()
-    status_obj = StatusCheck(**status_dict)
-    _ = await db.status_checks.insert_one(status_obj.dict())
-    return status_obj
-
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    status_checks = await db.status_checks.find().to_list(1000)
-    return [StatusCheck(**status_check) for status_check in status_checks]
-
-# Include the router in the main app
-app.include_router(api_router)
-
+# CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
     allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+# MongoDB connection
+MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017/')
+client = MongoClient(MONGO_URL)
+db = client.fanar_career_compass
 
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    client.close()
+# Pydantic models
+class CareerInterest(BaseModel):
+    interests: str
+    language: str = "arabic"
+
+class CVData(BaseModel):
+    full_name: str
+    career_goal: str
+    skills: str
+    experience: str
+    education: str
+    languages: List[str]
+    cv_language: str = "arabic"
+
+class InterviewQuestion(BaseModel):
+    question: str
+    answer: str
+    language: str = "arabic"
+
+class JobOfferData(BaseModel):
+    job_description: str
+    language: str = "arabic"
+
+# Routes
+@app.get("/")
+async def root():
+    return {"message": "Fanar Career Compass API"}
+
+@app.post("/api/career-recommendation")
+async def get_career_recommendations(data: CareerInterest):
+    # Placeholder for Fanar AI integration
+    # Mock response for now
+    mock_careers = [
+        {
+            "title": "مطور برمجيات",
+            "description": "تطوير التطبيقات والمواقع الإلكترونية باستخدام أحدث التقنيات",
+            "skills_needed": ["البرمجة", "حل المشكلات", "العمل الجماعي"],
+            "salary_range": "15,000 - 25,000 ريال"
+        },
+        {
+            "title": "مصمم جرافيك",
+            "description": "إنشاء التصميمات البصرية للعلامات التجارية والمنتجات",
+            "skills_needed": ["الإبداع", "برامج التصميم", "التواصل البصري"],
+            "salary_range": "8,000 - 18,000 ريال"
+        },
+        {
+            "title": "محلل بيانات",
+            "description": "تحليل البيانات واستخراج الرؤى التجارية المفيدة",
+            "skills_needed": ["الرياضيات", "البرمجة", "التحليل النقدي"],
+            "salary_range": "12,000 - 22,000 ريال"
+        }
+    ]
+    
+    return {"careers": mock_careers, "language": data.language}
+
+@app.post("/api/generate-cv")
+async def generate_cv(data: CVData):
+    # Placeholder for Fanar AI integration
+    # Mock CV generation
+    cv_id = str(uuid.uuid4())
+    
+    # Store CV data (you'll integrate with Fanar AI later)
+    cv_collection = db.cvs
+    cv_document = {
+        "cv_id": cv_id,
+        "full_name": data.full_name,
+        "career_goal": data.career_goal,
+        "skills": data.skills,
+        "experience": data.experience,
+        "education": data.education,
+        "languages": data.languages,
+        "cv_language": data.cv_language,
+        "generated_cv": f"سيرة ذاتية مُولدة بواسطة الذكاء الاصطناعي لـ {data.full_name}"
+    }
+    
+    cv_collection.insert_one(cv_document)
+    
+    return {
+        "cv_id": cv_id,
+        "generated_cv": cv_document["generated_cv"],
+        "message": "تم إنشاء السيرة الذاتية بنجاح"
+    }
+
+@app.post("/api/interview-feedback")
+async def get_interview_feedback(data: InterviewQuestion):
+    # Placeholder for Fanar AI integration
+    mock_feedback = {
+        "score": 85,
+        "feedback": "إجابة جيدة! يمكنك تحسين الثقة في الصوت وإضافة المزيد من الأمثلة العملية.",
+        "suggestions": [
+            "استخدم أمثلة محددة من خبرتك",
+            "تحدث بثقة أكبر",
+            "اربط إجابتك بمتطلبات الوظيفة"
+        ]
+    }
+    
+    return mock_feedback
+
+@app.post("/api/sharia-check")
+async def check_sharia_compliance(data: JobOfferData):
+    # Placeholder for Fanar AI integration
+    mock_result = {
+        "is_compliant": True,
+        "compliance_level": "متوافق بالكامل",
+        "explanation": "هذا العرض الوظيفي متوافق مع أحكام الشريعة الإسلامية. لا يحتوي على أنشطة محرمة مثل الربا أو بيع المحرمات.",
+        "recommendations": [
+            "تأكد من مواعيد الصلاة في بيئة العمل",
+            "اسأل عن السياسات المتعلقة بالإجازات الدينية"
+        ]
+    }
+    
+    return mock_result
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001)

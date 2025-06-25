@@ -1,52 +1,647 @@
-import { useEffect } from "react";
-import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import './App.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+function App() {
+  const [currentPage, setCurrentPage] = useState('home');
+  const [language, setLanguage] = useState('arabic');
+  const [isRTL, setIsRTL] = useState(true);
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
+  // Language content
+  const content = {
+    arabic: {
+      nav: {
+        home: 'الرئيسية',
+        careerDiscovery: 'اكتشاف المهن',
+        cvGenerator: 'مولد السيرة الذاتية',
+        interviewTrainer: 'مدرب المقابلات',
+        jobVerifier: 'تحقق من العرض',
+        about: 'عن المشروع'
+      },
+      home: {
+        title: 'فنار بوصلة المهن',
+        subtitle: 'تمكين مستقبل الشباب العربي من خلال الذكاء الاصطناعي',
+        description: 'اكتشف مهنتك المثالية، أنشئ سيرتك الذاتية، تدرب على المقابلات، وتحقق من توافق العروض الوظيفية مع القيم الإسلامية',
+        cta1: 'ابدأ رحلتك المهنية',
+        cta2: 'جرب مولد السيرة الذاتية',
+        cta3: 'تحقق من العرض الوظيفي'
+      },
+      careerDiscovery: {
+        title: 'اكتشاف المهن',
+        subtitle: 'اكتشف المهنة المثالية لك بناءً على اهتماماتك',
+        interestsLabel: 'ما هي اهتماماتك؟',
+        interestsPlaceholder: 'مثال: أحب الحيوانات، العلوم، التعامل مع الناس، الفن...',
+        submitBtn: 'احصل على توصيات مهنية',
+        askMoreBtn: 'اسأل المزيد'
+      },
+      cvGenerator: {
+        title: 'مولد السيرة الذاتية العربية',
+        subtitle: 'أنشئ سيرة ذاتية احترافية بالذكاء الاصطناعي',
+        fullName: 'الاسم الكامل',
+        careerGoal: 'الهدف المهني',
+        skills: 'المهارات',
+        experience: 'الخبرة',
+        education: 'التعليم',
+        languages: 'اللغات',
+        generateBtn: 'إنشاء السيرة الذاتية'
+      },
+      interviewTrainer: {
+        title: 'مدرب المقابلات',
+        subtitle: 'تدرب على المقابلات مع الذكاء الاصطناعي',
+        recordBtn: 'سجل إجابتك',
+        question: 'حدثني عن نفسك وخبراتك المهنية',
+        feedbackTitle: 'تقييم الذكاء الاصطناعي'
+      },
+      jobVerifier: {
+        title: 'تحقق من توافق العرض الوظيفي',
+        subtitle: 'تأكد من توافق العرض الوظيفي مع القيم الإسلامية',
+        jobOfferLabel: 'الصق وصف الوظيفة أو العرض',
+        submitBtn: 'تحقق من التوافق',
+        compliant: '✅ متوافق مع الشريعة',
+        nonCompliant: '⚠️ غير متوافق بالكامل'
+      },
+      about: {
+        title: 'عن فنار بوصلة المهن',
+        mission: 'مهمتنا',
+        missionText: 'نسعى لتمكين الشباب العربي من اتخاذ قرارات مهنية مدروسة تتماشى مع قيمهم وتطلعاتهم',
+        importance: 'لماذا الدعم المهني باللغة العربية مهم؟',
+        importanceText: 'يستحق الشباب العربي الحصول على إرشاد مهني بلغتهم الأم يفهم ثقافتهم وقيمهم',
+        islamicValues: 'لماذا القيم الإسلامية مهمة في الوظائف الحديثة؟',
+        islamicValuesText: 'نؤمن بأهمية التوازن بين النجاح المهني والالتزام بالقيم الإسلامية'
+      }
+    },
+    english: {
+      nav: {
+        home: 'Home',
+        careerDiscovery: 'Career Discovery',
+        cvGenerator: 'CV Generator',
+        interviewTrainer: 'Interview Trainer',
+        jobVerifier: 'Job Verifier',
+        about: 'About'
+      },
+      home: {
+        title: 'Fanar Career Compass',
+        subtitle: 'Empowering the future of Arabic youth through AI',
+        description: 'Discover your ideal career, build your CV, practice interviews, and verify job offers against Islamic values',
+        cta1: 'Start Career Journey',
+        cta2: 'Try CV Generator',
+        cta3: 'Verify Job Offer'
+      },
+      careerDiscovery: {
+        title: 'Career Discovery',
+        subtitle: 'Discover your perfect career based on your interests',
+        interestsLabel: 'What are your interests?',
+        interestsPlaceholder: 'Example: I love animals, science, working with people, art...',
+        submitBtn: 'Get Career Recommendations',
+        askMoreBtn: 'Ask more'
+      },
+      cvGenerator: {
+        title: 'Arabic CV Generator',
+        subtitle: 'Create a professional CV with AI',
+        fullName: 'Full Name',
+        careerGoal: 'Career Goal',
+        skills: 'Skills',
+        experience: 'Experience',
+        education: 'Education',
+        languages: 'Languages',
+        generateBtn: 'Generate CV'
+      },
+      interviewTrainer: {
+        title: 'Interview Trainer',
+        subtitle: 'Practice interviews with AI',
+        recordBtn: 'Record Your Answer',
+        question: 'Tell me about yourself and your professional experience',
+        feedbackTitle: 'AI Feedback'
+      },
+      jobVerifier: {
+        title: 'Job Offer Verifier',
+        subtitle: 'Ensure job offers align with Islamic values',
+        jobOfferLabel: 'Paste job offer or description',
+        submitBtn: 'Check Compliance',
+        compliant: '✅ Sharia Compliant',
+        nonCompliant: '⚠️ Not fully compliant'
+      },
+      about: {
+        title: 'About Fanar Career Compass',
+        mission: 'Our Mission',
+        missionText: 'We strive to empower Arabic youth to make informed career decisions that align with their values and aspirations',
+        importance: 'Why Arabic Career Support Matters?',
+        importanceText: 'Arabic youth deserve career guidance in their native language that understands their culture and values',
+        islamicValues: 'Why Islamic Values Matter in Modern Jobs?',
+        islamicValuesText: 'We believe in the importance of balancing professional success with commitment to Islamic values'
+      }
     }
   };
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
+  const toggleLanguage = () => {
+    const newLang = language === 'arabic' ? 'english' : 'arabic';
+    setLanguage(newLang);
+    setIsRTL(newLang === 'arabic');
+  };
 
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
+  const t = content[language];
+
+  // State for different pages
+  const [careerResults, setCareerResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [cvData, setCvData] = useState({
+    fullName: '', careerGoal: '', skills: '', experience: '', education: '', languages: []
+  });
+  const [generatedCV, setGeneratedCV] = useState('');
+  const [interviewFeedback, setInterviewFeedback] = useState(null);
+  const [jobVerifierResult, setJobVerifierResult] = useState(null);
+
+  // Mock API calls (will be replaced with your Fanar AI integration)
+  const handleCareerDiscovery = async (interests) => {
+    setIsLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      const mockCareers = [
+        {
+          title: 'مطور برمجيات',
+          description: 'تطوير التطبيقات والمواقع الإلكترونية باستخدام أحدث التقنيات',
+          skills_needed: ['البرمجة', 'حل المشكلات', 'العمل الجماعي'],
+          salary_range: '15,000 - 25,000 ريال'
+        },
+        {
+          title: 'مصمم جرافيك',
+          description: 'إنشاء التصميمات البصرية للعلامات التجارية والمنتجات',
+          skills_needed: ['الإبداع', 'برامج التصميم', 'التواصل البصري'],
+          salary_range: '8,000 - 18,000 ريال'
+        }
+      ];
+      setCareerResults(mockCareers);
+      setIsLoading(false);
+    }, 2000);
+  };
+
+  const handleCVGeneration = async () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setGeneratedCV(`سيرة ذاتية مُولدة بواسطة الذكاء الاصطناعي لـ ${cvData.fullName}
+      
+الهدف المهني: ${cvData.careerGoal}
+
+المهارات: ${cvData.skills}
+
+الخبرة: ${cvData.experience}
+
+التعليم: ${cvData.education}`);
+      setIsLoading(false);
+    }, 2000);
+  };
+
+  const renderHomePage = () => (
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-br from-emerald-50 to-blue-50 py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-black opacity-5"></div>
+        <div className="relative container mx-auto px-6 text-center">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-6">
+              {t.home.title}
+            </h1>
+            <p className="text-2xl md:text-3xl text-gray-600 mb-8 font-medium">
+              {t.home.subtitle}
+            </p>
+            <p className="text-lg md:text-xl text-gray-500 mb-12 max-w-3xl mx-auto leading-relaxed">
+              {t.home.description}
+            </p>
+            
+            {/* CTA Buttons */}
+            <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
+              <button 
+                onClick={() => setCurrentPage('careerDiscovery')}
+                className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-emerald-600 hover:to-emerald-700 transform hover:scale-105 transition-all shadow-lg hover:shadow-xl"
+              >
+                {t.home.cta1}
+              </button>
+              <button 
+                onClick={() => setCurrentPage('cvGenerator')}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all shadow-lg hover:shadow-xl"
+              >
+                {t.home.cta2}
+              </button>
+              <button 
+                onClick={() => setCurrentPage('jobVerifier')}
+                className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-purple-600 hover:to-purple-700 transform hover:scale-105 transition-all shadow-lg hover:shadow-xl"
+              >
+                {t.home.cta3}
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        {/* Hero Image */}
+        <div className="mt-16 container mx-auto px-6">
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all">
+              <img src="https://images.unsplash.com/photo-1552664730-d307ca884978" alt="Career Planning" className="w-full h-64 object-cover"/>
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all">
+              <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c" alt="Professional Development" className="w-full h-64 object-cover"/>
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all">
+              <img src="https://images.unsplash.com/photo-1712802666269-86b60e108288" alt="Arabic Youth" className="w-full h-64 object-cover"/>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
-};
 
-function App() {
+  const renderCareerDiscovery = () => (
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 py-12">
+      <div className="container mx-auto px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">{t.careerDiscovery.title}</h1>
+            <p className="text-xl text-gray-600">{t.careerDiscovery.subtitle}</p>
+          </div>
+          
+          <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const interests = e.target.interests.value;
+              handleCareerDiscovery(interests);
+            }}>
+              <div className="mb-6">
+                <label className="block text-lg font-semibold text-gray-700 mb-3">
+                  {t.careerDiscovery.interestsLabel}
+                </label>
+                <textarea 
+                  name="interests"
+                  className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:outline-none resize-none h-32"
+                  placeholder={t.careerDiscovery.interestsPlaceholder}
+                  required
+                />
+              </div>
+              
+              <button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white py-4 rounded-xl text-lg font-semibold hover:from-emerald-600 hover:to-green-700 transition-all disabled:opacity-50"
+              >
+                {isLoading ? 'جاري التحليل...' : t.careerDiscovery.submitBtn}
+              </button>
+            </form>
+          </div>
+          
+          {/* Results */}
+          {careerResults.length > 0 && (
+            <div className="grid md:grid-cols-2 gap-6">
+              {careerResults.map((career, index) => (
+                <div key={index} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all">
+                  <h3 className="text-2xl font-bold text-emerald-600 mb-3">{career.title}</h3>
+                  <p className="text-gray-600 mb-4">{career.description}</p>
+                  <div className="mb-4">
+                    <h4 className="font-semibold text-gray-700 mb-2">المهارات المطلوبة:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {career.skills_needed.map((skill, i) => (
+                        <span key={i} className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm">{skill}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-lg font-semibold text-gray-800">الراتب المتوقع: {career.salary_range}</p>
+                  <button className="mt-4 bg-emerald-500 text-white px-6 py-2 rounded-lg hover:bg-emerald-600 transition-all">
+                    {t.careerDiscovery.askMoreBtn}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderCVGenerator = () => (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12">
+      <div className="container mx-auto px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">{t.cvGenerator.title}</h1>
+            <p className="text-xl text-gray-600">{t.cvGenerator.subtitle}</p>
+          </div>
+          
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Form */}
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                handleCVGeneration();
+              }}>
+                <div className="grid gap-6">
+                  <div>
+                    <label className="block font-semibold text-gray-700 mb-2">{t.cvGenerator.fullName}</label>
+                    <input 
+                      type="text" 
+                      className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                      onChange={(e) => setCvData({...cvData, fullName: e.target.value})}
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block font-semibold text-gray-700 mb-2">{t.cvGenerator.careerGoal}</label>
+                    <input 
+                      type="text" 
+                      className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                      onChange={(e) => setCvData({...cvData, careerGoal: e.target.value})}
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block font-semibold text-gray-700 mb-2">{t.cvGenerator.skills}</label>
+                    <textarea 
+                      className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none resize-none h-24"
+                      onChange={(e) => setCvData({...cvData, skills: e.target.value})}
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block font-semibold text-gray-700 mb-2">{t.cvGenerator.experience}</label>
+                    <textarea 
+                      className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none resize-none h-24"
+                      onChange={(e) => setCvData({...cvData, experience: e.target.value})}
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block font-semibold text-gray-700 mb-2">{t.cvGenerator.education}</label>
+                    <textarea 
+                      className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none resize-none h-24"
+                      onChange={(e) => setCvData({...cvData, education: e.target.value})}
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block font-semibold text-gray-700 mb-2">{t.cvGenerator.languages}</label>
+                    <div className="flex flex-wrap gap-3">
+                      {['العربية', 'English', 'Français'].map(lang => (
+                        <label key={lang} className="flex items-center">
+                          <input type="checkbox" className="mr-2 ml-2" />
+                          <span>{lang}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                <button 
+                  type="submit" 
+                  disabled={isLoading}
+                  className="w-full mt-8 bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-4 rounded-xl text-lg font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all disabled:opacity-50"
+                >
+                  {isLoading ? 'جاري الإنشاء...' : t.cvGenerator.generateBtn}
+                </button>
+              </form>
+            </div>
+            
+            {/* Generated CV Preview */}
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6">معاينة السيرة الذاتية</h3>
+              {generatedCV ? (
+                <div className="bg-gray-50 p-6 rounded-xl whitespace-pre-line">
+                  {generatedCV}
+                </div>
+              ) : (
+                <div className="bg-gray-50 p-6 rounded-xl text-gray-500 text-center">
+                  ستظهر السيرة الذاتية المُولدة هنا
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderInterviewTrainer = () => (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 py-12">
+      <div className="container mx-auto px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">{t.interviewTrainer.title}</h1>
+            <p className="text-xl text-gray-600">{t.interviewTrainer.subtitle}</p>
+          </div>
+          
+          <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div className="text-center mb-8">
+              <div className="w-24 h-24 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <span className="text-4xl">🤖</span>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">مُحاكي مقابلة العمل</h3>
+              <p className="text-lg text-gray-600 mb-6">{t.interviewTrainer.question}</p>
+              
+              <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition-all">
+                {t.interviewTrainer.recordBtn} 🎤
+              </button>
+            </div>
+          </div>
+          
+          {/* Mock Feedback */}
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            <h3 className="text-2xl font-bold text-purple-600 mb-6">{t.interviewTrainer.feedbackTitle}</h3>
+            <div className="space-y-4">
+              <div className="bg-green-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-green-700 mb-2">التقييم: 85/100</h4>
+                <p className="text-green-600">إجابة جيدة! يمكنك تحسين الثقة في الصوت وإضافة المزيد من الأمثلة العملية.</p>
+              </div>
+              
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-semibold text-blue-700 mb-2">اقتراحات للتحسين:</h4>
+                <ul className="list-disc list-inside text-blue-600 space-y-1">
+                  <li>استخدم أمثلة محددة من خبرتك</li>
+                  <li>تحدث بثقة أكبر</li>
+                  <li>اربط إجابتك بمتطلبات الوظيفة</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderJobVerifier = () => (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 py-12">
+      <div className="container mx-auto px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">{t.jobVerifier.title}</h1>
+            <p className="text-xl text-gray-600">{t.jobVerifier.subtitle}</p>
+          </div>
+          
+          <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              setJobVerifierResult({
+                is_compliant: true,
+                compliance_level: 'متوافق بالكامل',
+                explanation: 'هذا العرض الوظيفي متوافق مع أحكام الشريعة الإسلامية. لا يحتوي على أنشطة محرمة مثل الربا أو بيع المحرمات.',
+                recommendations: [
+                  'تأكد من مواعيد الصلاة في بيئة العمل',
+                  'اسأل عن السياسات المتعلقة بالإجازات الدينية'
+                ]
+              });
+            }}>
+              <div className="mb-6">
+                <label className="block text-lg font-semibold text-gray-700 mb-3">
+                  {t.jobVerifier.jobOfferLabel}
+                </label>
+                <textarea 
+                  className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none resize-none h-40"
+                  placeholder="الصق نص العرض الوظيفي هنا..."
+                  required
+                />
+              </div>
+              
+              <div className="mb-6">
+                <label className="block text-lg font-semibold text-gray-700 mb-3">
+                  أو ارفع ملف (اختياري)
+                </label>
+                <input 
+                  type="file" 
+                  accept=".txt,.pdf"
+                  className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:outline-none"
+                />
+              </div>
+              
+              <button 
+                type="submit"
+                className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 rounded-xl text-lg font-semibold hover:from-orange-600 hover:to-red-600 transition-all"
+              >
+                {t.jobVerifier.submitBtn}
+              </button>
+            </form>
+          </div>
+          
+          {/* Results */}
+          {jobVerifierResult && (
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <div className="text-center mb-6">
+                <div className={`inline-flex items-center px-6 py-3 rounded-full text-lg font-semibold ${
+                  jobVerifierResult.is_compliant 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'bg-yellow-100 text-yellow-700'
+                }`}>
+                  {jobVerifierResult.is_compliant ? t.jobVerifier.compliant : t.jobVerifier.nonCompliant}
+                </div>
+              </div>
+              
+              <div className="space-y-6">
+                <div>
+                  <h4 className="text-xl font-bold text-gray-800 mb-3">التفسير:</h4>
+                  <p className="text-gray-600 leading-relaxed">{jobVerifierResult.explanation}</p>
+                </div>
+                
+                <div>
+                  <h4 className="text-xl font-bold text-gray-800 mb-3">التوصيات:</h4>
+                  <ul className="list-disc list-inside text-gray-600 space-y-2">
+                    {jobVerifierResult.recommendations.map((rec, index) => (
+                      <li key={index}>{rec}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderAboutPage = () => (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 py-12">
+      <div className="container mx-auto px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">{t.about.title}</h1>
+          </div>
+          
+          <div className="space-y-8">
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <h2 className="text-3xl font-bold text-indigo-600 mb-4">{t.about.mission}</h2>
+              <p className="text-lg text-gray-600 leading-relaxed">{t.about.missionText}</p>
+            </div>
+            
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <h2 className="text-3xl font-bold text-purple-600 mb-4">{t.about.importance}</h2>
+              <p className="text-lg text-gray-600 leading-relaxed">{t.about.importanceText}</p>
+            </div>
+            
+            <div className="bg-white rounded-2xl shadow-xl p-8">
+              <h2 className="text-3xl font-bold text-emerald-600 mb-4">{t.about.islamicValues}</h2>
+              <p className="text-lg text-gray-600 leading-relaxed">{t.about.islamicValuesText}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderCurrentPage = () => {
+    switch(currentPage) {
+      case 'home': return renderHomePage();
+      case 'careerDiscovery': return renderCareerDiscovery();
+      case 'cvGenerator': return renderCVGenerator();
+      case 'interviewTrainer': return renderInterviewTrainer();
+      case 'jobVerifier': return renderJobVerifier();
+      case 'about': return renderAboutPage();
+      default: return renderHomePage();
+    }
+  };
+
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+    <div className={`min-h-screen ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+      {/* Navigation */}
+      <nav className="bg-white shadow-lg sticky top-0 z-50">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-4 space-x-reverse">
+              <span className="text-2xl">🧭</span>
+              <span className="text-xl font-bold text-gray-800">فنار بوصلة المهن</span>
+            </div>
+            
+            <div className="hidden md:flex items-center space-x-6 space-x-reverse">
+              {Object.entries(t.nav).map(([key, value]) => (
+                <button
+                  key={key}
+                  onClick={() => setCurrentPage(key)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    currentPage === key 
+                      ? 'bg-emerald-500 text-white' 
+                      : 'text-gray-600 hover:text-emerald-600'
+                  }`}
+                >
+                  {value}
+                </button>
+              ))}
+            </div>
+            
+            <button 
+              onClick={toggleLanguage}
+              className="bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-4 py-2 rounded-lg font-medium hover:from-emerald-600 hover:to-blue-600 transition-all"
+            >
+              {language === 'arabic' ? 'EN' : 'عر'}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      {renderCurrentPage()}
+
+      {/* Floating Chat Icon */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <button className="bg-gradient-to-r from-emerald-500 to-blue-500 text-white w-16 h-16 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all flex items-center justify-center">
+          <span className="text-2xl">💬</span>
+        </button>
+      </div>
     </div>
   );
 }
