@@ -1098,52 +1098,61 @@ function App() {
   );
 
   const renderJobVerifier = () => (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 py-12">
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-orange-900 to-red-900' : 'bg-gradient-to-br from-orange-50 to-red-50'} py-12`}>
       <div className="container mx-auto px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">{t.jobVerifier.title}</h1>
-            <p className="text-xl text-gray-600">{t.jobVerifier.subtitle}</p>
+            <h1 className={`text-4xl md:text-5xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>{t.jobVerifier.title}</h1>
+            <p className={`text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{t.jobVerifier.subtitle}</p>
           </div>
           
-          <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+          <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white'} backdrop-blur-sm rounded-2xl shadow-xl p-8 mb-8 border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
             <form onSubmit={(e) => {
               e.preventDefault();
               setJobVerifierResult({
                 is_compliant: true,
-                compliance_level: 'متوافق بالكامل',
-                explanation: 'هذا العرض الوظيفي متوافق مع أحكام الشريعة الإسلامية. لا يحتوي على أنشطة محرمة مثل الربا أو بيع المحرمات.',
-                recommendations: [
-                  'تأكد من مواعيد الصلاة في بيئة العمل',
-                  'اسأل عن السياسات المتعلقة بالإجازات الدينية'
-                ]
+                compliance_level: language === 'arabic' ? 'متوافق بالكامل' : 'Fully Compliant',
+                explanation: t.jobVerifier.mockExplanation,
+                recommendations: t.jobVerifier.mockRecommendations
               });
             }}>
               <div className="mb-6">
-                <label className="block text-lg font-semibold text-gray-700 mb-3">
+                <label className={`block text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} mb-3`}>
                   {t.jobVerifier.jobOfferLabel}
                 </label>
                 <textarea 
-                  className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none resize-none h-40"
-                  placeholder="الصق نص العرض الوظيفي هنا..."
+                  className={`w-full p-4 border-2 rounded-xl focus:outline-none resize-none h-40 backdrop-blur-sm transition-all ${
+                    isDarkMode 
+                      ? 'bg-gray-700/70 border-gray-600 focus:border-orange-500 text-white placeholder-gray-400' 
+                      : 'bg-white/70 border-gray-200 focus:border-orange-500 text-gray-900'
+                  }`}
+                  placeholder={t.jobVerifier.jobOfferPlaceholder}
                   required
                 />
               </div>
               
               <div className="mb-6">
-                <label className="block text-lg font-semibold text-gray-700 mb-3">
-                  أو ارفع ملف (اختياري)
+                <label className={`block text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} mb-3`}>
+                  {t.jobVerifier.uploadLabel}
                 </label>
                 <input 
                   type="file" 
                   accept=".txt,.pdf"
-                  className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:outline-none"
+                  className={`w-full p-3 border-2 rounded-lg focus:outline-none transition-all ${
+                    isDarkMode 
+                      ? 'bg-gray-700/70 border-gray-600 focus:border-orange-500 text-white' 
+                      : 'bg-white/70 border-gray-200 focus:border-orange-500'
+                  }`}
                 />
               </div>
               
               <button 
                 type="submit"
-                className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 rounded-xl text-lg font-semibold hover:from-orange-600 hover:to-red-600 transition-all"
+                className={`w-full py-4 rounded-xl text-lg font-semibold transition-all ${
+                  isDarkMode
+                    ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700'
+                    : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600'
+                } text-white`}
               >
                 {t.jobVerifier.submitBtn}
               </button>
@@ -1152,12 +1161,12 @@ function App() {
           
           {/* Results */}
           {jobVerifierResult && (
-            <div className="bg-white rounded-2xl shadow-xl p-8">
+            <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white'} backdrop-blur-sm rounded-2xl shadow-xl p-8 border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
               <div className="text-center mb-6">
                 <div className={`inline-flex items-center px-6 py-3 rounded-full text-lg font-semibold ${
                   jobVerifierResult.is_compliant 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'bg-yellow-100 text-yellow-700'
+                    ? (isDarkMode ? 'bg-green-900/30 text-green-400 border border-green-700' : 'bg-green-100 text-green-700') 
+                    : (isDarkMode ? 'bg-yellow-900/30 text-yellow-400 border border-yellow-700' : 'bg-yellow-100 text-yellow-700')
                 }`}>
                   {jobVerifierResult.is_compliant ? t.jobVerifier.compliant : t.jobVerifier.nonCompliant}
                 </div>
@@ -1165,13 +1174,13 @@ function App() {
               
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-xl font-bold text-gray-800 mb-3">التفسير:</h4>
-                  <p className="text-gray-600 leading-relaxed">{jobVerifierResult.explanation}</p>
+                  <h4 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-3`}>{t.jobVerifier.explanationTitle}</h4>
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} leading-relaxed`}>{jobVerifierResult.explanation}</p>
                 </div>
                 
                 <div>
-                  <h4 className="text-xl font-bold text-gray-800 mb-3">التوصيات:</h4>
-                  <ul className="list-disc list-inside text-gray-600 space-y-2">
+                  <h4 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-3`}>{t.jobVerifier.recommendationsTitle}</h4>
+                  <ul className={`list-disc list-inside ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} space-y-2`}>
                     {jobVerifierResult.recommendations.map((rec, index) => (
                       <li key={index}>{rec}</li>
                     ))}
