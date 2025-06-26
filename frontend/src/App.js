@@ -1051,43 +1051,43 @@ function App() {
   };
 
   const renderInterviewTrainer = () => (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 py-12">
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-purple-900 to-pink-900' : 'bg-gradient-to-br from-purple-50 to-pink-50'} py-12`}>
       <div className="container mx-auto px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">{t.interviewTrainer.title}</h1>
-            <p className="text-xl text-gray-600">{t.interviewTrainer.subtitle}</p>
+            <h1 className={`text-4xl md:text-5xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>{t.interviewTrainer.title}</h1>
+            <p className={`text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{t.interviewTrainer.subtitle}</p>
           </div>
           
-          <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+          <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white'} backdrop-blur-sm rounded-2xl shadow-xl p-8 mb-8 border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
             <div className="text-center mb-8">
-              <div className="w-24 h-24 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full mx-auto mb-4 flex items-center justify-center">
+              <div className={`w-24 h-24 ${isDarkMode ? 'bg-gradient-to-br from-purple-600 to-pink-600' : 'bg-gradient-to-br from-purple-400 to-pink-400'} rounded-full mx-auto mb-4 flex items-center justify-center`}>
                 <span className="text-4xl">🤖</span>
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">مُحاكي مقابلة العمل</h3>
-              <p className="text-lg text-gray-600 mb-6">{t.interviewTrainer.question}</p>
+              <h3 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>{t.interviewTrainer.simulator}</h3>
+              <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mb-6`}>{t.interviewTrainer.question}</p>
               
-              <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition-all">
+              <button className={`${isDarkMode ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700' : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'} text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all`}>
                 {t.interviewTrainer.recordBtn} 🎤
               </button>
             </div>
           </div>
           
           {/* Mock Feedback */}
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <h3 className="text-2xl font-bold text-purple-600 mb-6">{t.interviewTrainer.feedbackTitle}</h3>
+          <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white'} backdrop-blur-sm rounded-2xl shadow-xl p-8 border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+            <h3 className={`text-2xl font-bold ${isDarkMode ? 'text-purple-400' : 'text-purple-600'} mb-6`}>{t.interviewTrainer.feedbackTitle}</h3>
             <div className="space-y-4">
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-green-700 mb-2">التقييم: 85/100</h4>
-                <p className="text-green-600">إجابة جيدة! يمكنك تحسين الثقة في الصوت وإضافة المزيد من الأمثلة العملية.</p>
+              <div className={`${isDarkMode ? 'bg-green-900/30 border-green-700' : 'bg-green-50'} p-4 rounded-lg border`}>
+                <h4 className={`font-semibold ${isDarkMode ? 'text-green-400' : 'text-green-700'} mb-2`}>{t.interviewTrainer.score} 85/100</h4>
+                <p className={`${isDarkMode ? 'text-green-300' : 'text-green-600'}`}>{t.interviewTrainer.mockFeedback}</p>
               </div>
               
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-blue-700 mb-2">اقتراحات للتحسين:</h4>
-                <ul className="list-disc list-inside text-blue-600 space-y-1">
-                  <li>استخدم أمثلة محددة من خبرتك</li>
-                  <li>تحدث بثقة أكبر</li>
-                  <li>اربط إجابتك بمتطلبات الوظيفة</li>
+              <div className={`${isDarkMode ? 'bg-blue-900/30 border-blue-700' : 'bg-blue-50'} p-4 rounded-lg border`}>
+                <h4 className={`font-semibold ${isDarkMode ? 'text-blue-400' : 'text-blue-700'} mb-2`}>{t.interviewTrainer.suggestions}</h4>
+                <ul className={`list-disc list-inside ${isDarkMode ? 'text-blue-300' : 'text-blue-600'} space-y-1`}>
+                  {t.interviewTrainer.mockSuggestions.map((suggestion, index) => (
+                    <li key={index}>{suggestion}</li>
+                  ))}
                 </ul>
               </div>
             </div>
