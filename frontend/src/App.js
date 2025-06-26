@@ -698,8 +698,8 @@ function App() {
         <div className="container mx-auto px-6">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">مولد السيرة الذاتية الذكي</h1>
-              <p className="text-xl text-gray-600">أنشئ سيرة ذاتية احترافية في 3 خطوات بسيطة</p>
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">{cvContent.cvGenerator.smartTitle}</h1>
+              <p className="text-xl text-gray-600">{cvContent.cvGenerator.smartSubtitle}</p>
             </div>
 
             {renderProgressSteps()}
@@ -717,7 +717,7 @@ function App() {
                   onClick={() => setCvStep(cvStep - 1)}
                   className="px-8 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-all"
                 >
-                  السابق
+                  {cvContent.cvGenerator.buttons.previous}
                 </button>
               )}
 
@@ -730,10 +730,10 @@ function App() {
                   {isGeneratingCV ? (
                     <>
                       <div className="spinner w-5 h-5"></div>
-                      <span>جاري الإنشاء...</span>
+                      <span>{cvContent.cvGenerator.buttons.generating}</span>
                     </>
                   ) : (
-                    <span>إنشاء السيرة الذاتية</span>
+                    <span>{cvContent.cvGenerator.buttons.generate}</span>
                   )}
                 </button>
               )}
@@ -745,13 +745,13 @@ function App() {
                     className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-semibold hover:from-green-600 hover:to-emerald-600 transition-all animate-pulse-slow flex items-center space-x-2 space-x-reverse"
                   >
                     <span>📥</span>
-                    <span>تحميل السيرة الذاتية</span>
+                    <span>{cvContent.cvGenerator.buttons.download}</span>
                   </button>
                   <button
                     onClick={resetCVGenerator}
                     className="px-8 py-3 bg-gray-500 text-white rounded-xl font-semibold hover:bg-gray-600 transition-all"
                   >
-                    إنشاء سيرة ذاتية جديدة
+                    {cvContent.cvGenerator.buttons.newCV}
                   </button>
                 </div>
               )}
@@ -761,8 +761,8 @@ function App() {
               <div className="mt-8 text-center">
                 <div className="bg-green-50 border border-green-200 rounded-xl p-6 max-w-md mx-auto">
                   <div className="text-4xl mb-2">✅</div>
-                  <h3 className="text-xl font-bold text-green-700 mb-2">تم إنشاء السيرة الذاتية بنجاح!</h3>
-                  <p className="text-green-600">جاهزة للتحميل بصيغة Word</p>
+                  <h3 className="text-xl font-bold text-green-700 mb-2">{cvContent.cvGenerator.success.title}</h3>
+                  <p className="text-green-600">{cvContent.cvGenerator.success.subtitle}</p>
                 </div>
               </div>
             )}
