@@ -558,13 +558,13 @@ function App() {
         <div className="space-y-6">
           <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200">
             <h3 className="text-2xl font-bold text-gray-800 mb-6">
-              {cvLanguage === 'arabic' ? 'معلومات السيرة الذاتية' : 'Resume Information'}
+              {cvContent.cvGenerator.step3Title}
             </h3>
             
             <div className="space-y-6">
               <div>
                 <label className="block font-semibold text-gray-700 mb-2">
-                  {cvLanguage === 'arabic' ? 'الاسم الكامل' : 'Full Name'}
+                  {cvContent.cvGenerator.fullName}
                 </label>
                 <input
                   type="text"
@@ -573,14 +573,14 @@ function App() {
                   className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all ${
                     cvErrors.fullName ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
                   }`}
-                  placeholder={cvLanguage === 'arabic' ? 'أدخل اسمك الكامل' : 'Enter your full name'}
+                  placeholder={cvContent.cvGenerator.fullNamePlaceholder}
                 />
                 {cvErrors.fullName && <p className="text-red-500 text-sm mt-1">{cvErrors.fullName}</p>}
               </div>
 
               <div>
                 <label className="block font-semibold text-gray-700 mb-2">
-                  {cvLanguage === 'arabic' ? 'المسمى الوظيفي' : 'Job Title'}
+                  {cvContent.cvGenerator.jobTitle}
                 </label>
                 <input
                   type="text"
@@ -589,14 +589,14 @@ function App() {
                   className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all ${
                     cvErrors.jobTitle ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
                   }`}
-                  placeholder={cvLanguage === 'arabic' ? 'مثال: مطور برمجيات' : 'e.g., Software Developer'}
+                  placeholder={cvContent.cvGenerator.jobTitlePlaceholder}
                 />
                 {cvErrors.jobTitle && <p className="text-red-500 text-sm mt-1">{cvErrors.jobTitle}</p>}
               </div>
 
               <div>
                 <label className="block font-semibold text-gray-700 mb-2">
-                  {cvLanguage === 'arabic' ? 'المهارات' : 'Skills'}
+                  {cvContent.cvGenerator.skills}
                 </label>
                 <textarea
                   value={cvData.skills}
@@ -604,14 +604,14 @@ function App() {
                   className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all resize-none h-32 ${
                     cvErrors.skills ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
                   }`}
-                  placeholder={cvLanguage === 'arabic' ? 'مثال: JavaScript, Python, React...' : 'e.g., JavaScript, Python, React...'}
+                  placeholder={cvContent.cvGenerator.skillsPlaceholder}
                 />
                 {cvErrors.skills && <p className="text-red-500 text-sm mt-1">{cvErrors.skills}</p>}
               </div>
 
               <div>
                 <label className="block font-semibold text-gray-700 mb-2">
-                  {cvLanguage === 'arabic' ? 'الخبرة' : 'Experience'}
+                  {cvContent.cvGenerator.experience}
                 </label>
                 <textarea
                   value={cvData.experience}
@@ -619,7 +619,7 @@ function App() {
                   className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all resize-none h-40 ${
                     cvErrors.experience ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
                   }`}
-                  placeholder={cvLanguage === 'arabic' ? 'اكتب خبراتك العملية...' : 'Describe your work experience...'}
+                  placeholder={cvContent.cvGenerator.experiencePlaceholder}
                 />
                 {cvErrors.experience && <p className="text-red-500 text-sm mt-1">{cvErrors.experience}</p>}
               </div>
@@ -631,37 +631,37 @@ function App() {
         <div className="space-y-6">
           <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200 min-h-[600px] ${selectedTemplate?.color === 'blue' ? 'border-l-4 border-l-blue-500' : selectedTemplate?.color === 'emerald' ? 'border-l-4 border-l-emerald-500' : 'border-l-4 border-l-purple-500'}`}>
             <h3 className="text-2xl font-bold text-gray-800 mb-6">
-              {cvLanguage === 'arabic' ? 'معاينة مباشرة' : 'Live Preview'}
+              {cvContent.cvGenerator.livePreview}
             </h3>
             
             <div className={`space-y-6 ${cvLanguage === 'arabic' ? 'text-right' : 'text-left'}`}>
               <div>
                 <h2 className={`text-3xl font-bold mb-2 ${selectedTemplate?.color === 'blue' ? 'text-blue-600' : selectedTemplate?.color === 'emerald' ? 'text-emerald-600' : 'text-purple-600'}`}>
-                  {cvData.fullName || (cvLanguage === 'arabic' ? 'اسم المتقدم' : 'Applicant Name')}
+                  {cvData.fullName || cvContent.cvGenerator.previewPlaceholders.name}
                 </h2>
                 <p className="text-xl text-gray-600">
-                  {cvData.jobTitle || (cvLanguage === 'arabic' ? 'المسمى الوظيفي' : 'Job Title')}
+                  {cvData.jobTitle || cvContent.cvGenerator.previewPlaceholders.jobTitle}
                 </p>
               </div>
 
               <div>
                 <h3 className={`text-xl font-bold mb-3 ${selectedTemplate?.color === 'blue' ? 'text-blue-600' : selectedTemplate?.color === 'emerald' ? 'text-emerald-600' : 'text-purple-600'}`}>
-                  {cvLanguage === 'arabic' ? 'المهارات' : 'Skills'}
+                  {cvContent.cvGenerator.skills}
                 </h3>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <p className="text-gray-700 whitespace-pre-wrap">
-                    {cvData.skills || (cvLanguage === 'arabic' ? 'المهارات التقنية والشخصية...' : 'Technical and soft skills...')}
+                    {cvData.skills || cvContent.cvGenerator.previewPlaceholders.skills}
                   </p>
                 </div>
               </div>
 
               <div>
                 <h3 className={`text-xl font-bold mb-3 ${selectedTemplate?.color === 'blue' ? 'text-blue-600' : selectedTemplate?.color === 'emerald' ? 'text-emerald-600' : 'text-purple-600'}`}>
-                  {cvLanguage === 'arabic' ? 'الخبرة' : 'Experience'}
+                  {cvContent.cvGenerator.experience}
                 </h3>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <p className="text-gray-700 whitespace-pre-wrap">
-                    {cvData.experience || (cvLanguage === 'arabic' ? 'تفاصيل الخبرة العملية والإنجازات...' : 'Work experience details and achievements...')}
+                    {cvData.experience || cvContent.cvGenerator.previewPlaceholders.experience}
                   </p>
                 </div>
               </div>
