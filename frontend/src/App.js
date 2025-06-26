@@ -503,7 +503,7 @@ function App() {
                 disabled={isLoading}
                 className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white py-4 rounded-xl text-lg font-semibold hover:from-emerald-600 hover:to-green-700 transition-all disabled:opacity-50"
               >
-                {isLoading ? 'جاري التحليل...' : t.careerDiscovery.submitBtn}
+                {isLoading ? t.careerDiscovery.analyzing : t.careerDiscovery.submitBtn}
               </button>
             </form>
           </div>
