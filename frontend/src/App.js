@@ -299,9 +299,18 @@ function App() {
         title: 'Job Offer Verifier',
         subtitle: 'Ensure job offers align with Islamic values',
         jobOfferLabel: 'Paste job offer or description',
+        jobOfferPlaceholder: 'Paste the job offer text here...',
+        uploadLabel: 'Or upload file (optional)',
         submitBtn: 'Check Compliance',
         compliant: '✅ Sharia Compliant',
-        nonCompliant: '⚠️ Not fully compliant'
+        nonCompliant: '⚠️ Not fully compliant',
+        explanationTitle: 'Explanation:',
+        recommendationsTitle: 'Recommendations:',
+        mockExplanation: 'This job offer is compliant with Islamic law principles. It does not contain prohibited activities such as interest-based transactions or selling prohibited items.',
+        mockRecommendations: [
+          'Ensure prayer times are accommodated in the work environment',
+          'Ask about policies regarding religious holidays'
+        ]
       },
       about: {
         title: 'About Wasila',
