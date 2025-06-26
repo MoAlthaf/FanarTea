@@ -469,9 +469,9 @@ function App() {
     
     // CV Template options
     const templates = [
-      { id: 1, name: 'كلاسيكي', nameEn: 'Classic', preview: '📄', color: 'blue' },
-      { id: 2, name: 'حديث', nameEn: 'Modern', preview: '🎨', color: 'emerald' },
-      { id: 3, name: 'إبداعي', nameEn: 'Creative', preview: '✨', color: 'purple' }
+      { id: 1, name: cvContent.cvGenerator.templates.classic, preview: '📄', color: 'blue' },
+      { id: 2, name: cvContent.cvGenerator.templates.modern, preview: '🎨', color: 'emerald' },
+      { id: 3, name: cvContent.cvGenerator.templates.creative, preview: '✨', color: 'purple' }
     ];
 
     // Step 1: Template Selection
