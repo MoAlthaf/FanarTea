@@ -182,20 +182,48 @@ function App() {
     }, 2000);
   };
 
+  // CV Generator Functions
+  const validateCVForm = () => {
+    const errors = {};
+    if (!cvData.fullName.trim()) errors.fullName = 'الاسم الكامل مطلوب';
+    if (!cvData.jobTitle.trim()) errors.jobTitle = 'المسمى الوظيفي مطلوب';
+    if (!cvData.skills.trim()) errors.skills = 'المهارات مطلوبة';
+    if (!cvData.experience.trim()) errors.experience = 'الخبرة مطلوبة';
+    
+    setCvErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleCVGeneration = async () => {
-    setIsLoading(true);
+    if (!validateCVForm()) return;
+    
+    setIsGeneratingCV(true);
+    
+    // Simulate API call to backend
     setTimeout(() => {
-      setGeneratedCV(`سيرة ذاتية مُولدة بواسطة الذكاء الاصطناعي لـ ${cvData.fullName}
-      
-الهدف المهني: ${cvData.careerGoal}
+      // Mock file generation
+      setGeneratedCVFile({
+        filename: `${cvData.fullName}_CV.docx`,
+        downloadUrl: '#', // This would be the actual file URL from backend
+        generated: true
+      });
+      setIsGeneratingCV(false);
+    }, 3000);
+  };
 
-المهارات: ${cvData.skills}
+  const downloadCV = () => {
+    // In real implementation, this would download the actual file
+    alert('تم تحميل السيرة الذاتية بنجاح!');
+  };
 
-الخبرة: ${cvData.experience}
-
-التعليم: ${cvData.education}`);
-      setIsLoading(false);
-    }, 2000);
+  const resetCVGenerator = () => {
+    setCvStep(1);
+    setSelectedTemplate(null);
+    setCvLanguage('arabic');
+    setCvData({ fullName: '', jobTitle: '', skills: '', experience: '' });
+    setCvErrors({});
+    setGeneratedCVFile(null);
+    setIsGeneratingCV(false);
   };
 
   const renderHomePage = () => (
