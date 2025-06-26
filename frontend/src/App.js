@@ -1239,12 +1239,16 @@ function App() {
   return (
     <div className={`min-h-screen ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Navigation */}
-      <nav className="bg-white shadow-lg sticky top-0 z-50">
+      <nav className="bg-white/90 backdrop-blur-sm shadow-lg sticky top-0 z-50 border-b border-gray-100">
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4 space-x-reverse">
-              <span className="text-2xl">🧭</span>
-              <span className="text-xl font-bold text-gray-800">فنار بوصلة المهن</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                <span className="text-xl font-bold text-white">W</span>
+              </div>
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent">
+                {language === 'arabic' ? 'واصلة' : 'Wasila'}
+              </span>
             </div>
             
             <div className="hidden md:flex items-center space-x-6 space-x-reverse">
@@ -1252,10 +1256,10 @@ function App() {
                 <button
                   key={key}
                   onClick={() => setCurrentPage(key)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  className={`px-4 py-2 rounded-xl font-medium transition-all ${
                     currentPage === key 
-                      ? 'bg-emerald-500 text-white' 
-                      : 'text-gray-600 hover:text-emerald-600'
+                      ? 'bg-gradient-to-r from-blue-500 to-emerald-500 text-white shadow-lg' 
+                      : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
                   }`}
                 >
                   {value}
@@ -1265,7 +1269,7 @@ function App() {
             
             <button 
               onClick={toggleLanguage}
-              className="bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-4 py-2 rounded-lg font-medium hover:from-emerald-600 hover:to-blue-600 transition-all"
+              className="bg-gradient-to-r from-blue-500 to-emerald-500 text-white px-6 py-2 rounded-xl font-medium hover:from-blue-600 hover:to-emerald-600 transition-all shadow-lg"
             >
               {language === 'arabic' ? 'EN' : 'عر'}
             </button>
