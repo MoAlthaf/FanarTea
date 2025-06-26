@@ -260,10 +260,12 @@ function App() {
   // CV Generator Functions
   const validateCVForm = () => {
     const errors = {};
-    if (!cvData.fullName.trim()) errors.fullName = cvLanguage === 'arabic' ? 'الاسم الكامل مطلوب' : 'Full name is required';
-    if (!cvData.jobTitle.trim()) errors.jobTitle = cvLanguage === 'arabic' ? 'المسمى الوظيفي مطلوب' : 'Job title is required';
-    if (!cvData.skills.trim()) errors.skills = cvLanguage === 'arabic' ? 'المهارات مطلوبة' : 'Skills are required';
-    if (!cvData.experience.trim()) errors.experience = cvLanguage === 'arabic' ? 'الخبرة مطلوبة' : 'Experience is required';
+    const cvContent = language === 'arabic' ? content.arabic : content.english;
+    
+    if (!cvData.fullName.trim()) errors.fullName = cvContent.cvGenerator.errors.fullNameRequired;
+    if (!cvData.jobTitle.trim()) errors.jobTitle = cvContent.cvGenerator.errors.jobTitleRequired;
+    if (!cvData.skills.trim()) errors.skills = cvContent.cvGenerator.errors.skillsRequired;
+    if (!cvData.experience.trim()) errors.experience = cvContent.cvGenerator.errors.experienceRequired;
     
     setCvErrors(errors);
     return Object.keys(errors).length === 0;
