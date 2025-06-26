@@ -6,7 +6,7 @@ client= OpenAI(
     api_key="fmFrMl3wHnB9SFnb8bzxNFpGCVE18Wcz"
 )
 #h
-def career_recommednation_agent(prompt):
+def career_recommednation_agent(interest,language):
     messages = [
         {
             "role": "system",
@@ -14,10 +14,10 @@ def career_recommednation_agent(prompt):
                 "You are a helpful and culturally aware career recommendation agent. "
                 "Given a user's interests, suggest up to 4 suitable career paths. "
                 "Each suggestion must include the following fields:\n"
-                "- title: (job title in English)\n"
-                "- description: (1-line job description in English)\n"
-                "- skills_needed: (a list of 2–4 essential skills in English)\n"
-                "- salary_range: (expected monthly salary in Qatari Riyal, e.g. '10,000 - 20,000 QAR')\n\n"
+                f"- title: (job title in {language})\n"
+                f"- description: (1-line job description in {language})\n"
+                f"- skills_needed: (a list of 2–4 essential skills in {language})\n"
+                "- salary_range: (expected monthly salary in Qatari Riyal, e.g. '5,000 - 10,000 QAR')\n\n"
                 "Only return the response in valid JSON format — no extra text or explanation. "
                 "Example format:\n"
                 "[\n"
@@ -33,7 +33,7 @@ def career_recommednation_agent(prompt):
         },
         {
             "role": "user",
-            "content": f"The user's interests are: {user_input}"
+            "content": f"The user's interests are: {interest}"
         }
     ]
     response = client.chat.completions.create(

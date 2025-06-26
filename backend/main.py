@@ -55,11 +55,8 @@ async def root():
 
 @app.post("/api/career-recommendation")
 async def get_career_recommendations(data: CareerInterest):
-    # Placeholder for Fanar AI integration
-    # Mock response for now
-    json_response = career_recommednation_agent(data)
+    json_response = career_recommednation_agent(data.interests, data.language)
     career_list = json.loads(json_response)
-    
     return {"careers": career_list, "language": data.language}
 
 @app.post("/api/generate-cv")
