@@ -274,7 +274,17 @@ function App() {
         subtitle: 'Practice interviews with AI',
         recordBtn: 'Record Your Answer',
         question: 'Tell me about yourself and your professional experience',
-        feedbackTitle: 'AI Feedback'
+        feedbackTitle: 'AI Feedback',
+        simulator: 'Job Interview Simulator',
+        score: 'Score:',
+        feedback: 'Feedback:',
+        suggestions: 'Suggestions for improvement:',
+        mockFeedback: 'Good answer! You can improve voice confidence and add more practical examples.',
+        mockSuggestions: [
+          'Use specific examples from your experience',
+          'Speak with more confidence',
+          'Connect your answer to job requirements'
+        ]
       },
       jobVerifier: {
         title: 'Job Offer Verifier',
