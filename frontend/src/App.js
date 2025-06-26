@@ -134,13 +134,50 @@ function App() {
       cvGenerator: {
         title: 'Arabic CV Generator',
         subtitle: 'Create a professional CV with AI',
+        smartTitle: 'Smart CV Generator',
+        smartSubtitle: 'Create a professional CV in 3 simple steps',
+        step1Title: 'Choose CV Template',
+        step1Subtitle: 'Select the design that suits your professional field',
+        step2Title: 'Choose CV Language',
+        step2Subtitle: 'Select the language you want to create your CV in',
+        step3Title: 'Resume Information',
+        livePreview: 'Live Preview',
+        templates: {
+          classic: 'Classic',
+          modern: 'Modern',
+          creative: 'Creative'
+        },
         fullName: 'Full Name',
-        careerGoal: 'Career Goal',
+        jobTitle: 'Job Title',
         skills: 'Skills',
         experience: 'Experience',
-        education: 'Education',
-        languages: 'Languages',
-        generateBtn: 'Generate CV'
+        fullNamePlaceholder: 'Enter your full name',
+        jobTitlePlaceholder: 'e.g., Software Developer',
+        skillsPlaceholder: 'e.g., JavaScript, Python, React...',
+        experiencePlaceholder: 'Describe your work experience...',
+        previewPlaceholders: {
+          name: 'Applicant Name',
+          jobTitle: 'Job Title',
+          skills: 'Technical and soft skills...',
+          experience: 'Work experience details and achievements...'
+        },
+        buttons: {
+          previous: 'Previous',
+          generate: 'Generate CV',
+          generating: 'Generating...',
+          download: 'Download CV',
+          newCV: 'Create New CV'
+        },
+        success: {
+          title: 'CV Generated Successfully!',
+          subtitle: 'Ready to download in Word format'
+        },
+        errors: {
+          fullNameRequired: 'Full name is required',
+          jobTitleRequired: 'Job title is required',
+          skillsRequired: 'Skills are required',
+          experienceRequired: 'Experience is required'
+        }
       },
       interviewTrainer: {
         title: 'Interview Trainer',
