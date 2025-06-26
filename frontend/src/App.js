@@ -678,27 +678,31 @@ function App() {
   );
 
   const renderCareerDiscovery = () => (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 py-12">
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-green-900 to-emerald-900' : 'bg-gradient-to-br from-green-50 to-emerald-50'} py-12`}>
       <div className="container mx-auto px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">{t.careerDiscovery.title}</h1>
-            <p className="text-xl text-gray-600">{t.careerDiscovery.subtitle}</p>
+            <h1 className={`text-4xl md:text-5xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>{t.careerDiscovery.title}</h1>
+            <p className={`text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{t.careerDiscovery.subtitle}</p>
           </div>
           
-          <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+          <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white'} backdrop-blur-sm rounded-2xl shadow-xl p-8 mb-8 border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
             <form onSubmit={(e) => {
               e.preventDefault();
               const interests = e.target.interests.value;
               handleCareerDiscovery(interests);
             }}>
               <div className="mb-6">
-                <label className="block text-lg font-semibold text-gray-700 mb-3">
+                <label className={`block text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} mb-3`}>
                   {t.careerDiscovery.interestsLabel}
                 </label>
                 <textarea 
                   name="interests"
-                  className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:outline-none resize-none h-32"
+                  className={`w-full p-4 border-2 rounded-xl focus:outline-none resize-none h-32 backdrop-blur-sm transition-all ${
+                    isDarkMode 
+                      ? 'bg-gray-700/70 border-gray-600 focus:border-emerald-500 text-white placeholder-gray-400' 
+                      : 'bg-white/70 border-gray-200 focus:border-emerald-500 text-gray-900'
+                  }`}
                   placeholder={t.careerDiscovery.interestsPlaceholder}
                   required
                 />
@@ -707,7 +711,11 @@ function App() {
               <button 
                 type="submit" 
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white py-4 rounded-xl text-lg font-semibold hover:from-emerald-600 hover:to-green-700 transition-all disabled:opacity-50"
+                className={`w-full py-4 rounded-xl text-lg font-semibold transition-all disabled:opacity-50 ${
+                  isDarkMode
+                    ? 'bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800'
+                    : 'bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700'
+                } text-white`}
               >
                 {isLoading ? t.careerDiscovery.analyzing : t.careerDiscovery.submitBtn}
               </button>
@@ -718,19 +726,23 @@ function App() {
           {careerResults.length > 0 && (
             <div className="grid md:grid-cols-2 gap-6">
               {careerResults.map((career, index) => (
-                <div key={index} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all">
-                  <h3 className="text-2xl font-bold text-emerald-600 mb-3">{career.title}</h3>
-                  <p className="text-gray-600 mb-4">{career.description}</p>
+                <div key={index} className={`${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white border-gray-200'} backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all p-6 border`}>
+                  <h3 className={`text-2xl font-bold ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'} mb-3`}>{career.title}</h3>
+                  <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mb-4`}>{career.description}</p>
                   <div className="mb-4">
-                    <h4 className="font-semibold text-gray-700 mb-2">{t.careerDiscovery.skillsNeeded}</h4>
+                    <h4 className={`font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} mb-2`}>{t.careerDiscovery.skillsNeeded}</h4>
                     <div className="flex flex-wrap gap-2">
                       {career.skills_needed.map((skill, i) => (
-                        <span key={i} className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-sm">{skill}</span>
+                        <span key={i} className={`${isDarkMode ? 'bg-emerald-900/30 text-emerald-300 border border-emerald-700' : 'bg-emerald-100 text-emerald-700'} px-3 py-1 rounded-full text-sm`}>{skill}</span>
                       ))}
                     </div>
                   </div>
-                  <p className="text-lg font-semibold text-gray-800">{t.careerDiscovery.expectedSalary} {career.salary_range}</p>
-                  <button className="mt-4 bg-emerald-500 text-white px-6 py-2 rounded-lg hover:bg-emerald-600 transition-all">
+                  <p className={`text-lg font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{t.careerDiscovery.expectedSalary} {career.salary_range}</p>
+                  <button className={`mt-4 px-6 py-2 rounded-lg font-semibold transition-all ${
+                    isDarkMode
+                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                      : 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                  }`}>
                     {t.careerDiscovery.askMoreBtn}
                   </button>
                 </div>
