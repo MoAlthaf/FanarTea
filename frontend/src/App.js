@@ -1357,7 +1357,7 @@ function App() {
 
       {/* Floating Chat Icon */}
       <div className="fixed bottom-6 right-6 z-50">
-        <button className="bg-gradient-to-r from-blue-500 to-emerald-500 text-white w-16 h-16 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all flex items-center justify-center backdrop-blur-sm">
+        <button className={`${isDarkMode ? 'bg-gradient-to-r from-blue-600 to-emerald-600' : 'bg-gradient-to-r from-blue-500 to-emerald-500'} text-white w-16 h-16 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all flex items-center justify-center backdrop-blur-sm`}>
           <span className="text-2xl">💬</span>
         </button>
       </div>
