@@ -489,55 +489,144 @@ function App() {
   const renderHomePage = () => (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-emerald-50 to-blue-50 py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-5"></div>
+      <div className="relative bg-gradient-to-br from-blue-50 via-emerald-50 to-white py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-emerald-500/5"></div>
         <div className="relative container mx-auto px-6 text-center">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-6">
+            {/* Logo */}
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-full mx-auto mb-6 flex items-center justify-center shadow-lg">
+              <span className="text-3xl font-bold text-white">W</span>
+            </div>
+            
+            <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-blue-600 via-emerald-600 to-blue-700 bg-clip-text text-transparent mb-6">
               {t.home.title}
             </h1>
-            <p className="text-2xl md:text-3xl text-gray-600 mb-8 font-medium">
+            <p className="text-2xl md:text-4xl text-gray-700 mb-8 font-medium">
               {t.home.subtitle}
             </p>
-            <p className="text-lg md:text-xl text-gray-500 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
               {t.home.description}
             </p>
             
-            {/* CTA Buttons */}
-            <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
-              <button 
-                onClick={() => setCurrentPage('careerDiscovery')}
-                className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-emerald-600 hover:to-emerald-700 transform hover:scale-105 transition-all shadow-lg hover:shadow-xl"
-              >
-                {t.home.cta1}
-              </button>
-              <button 
-                onClick={() => setCurrentPage('cvGenerator')}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all shadow-lg hover:shadow-xl"
-              >
-                {t.home.cta2}
-              </button>
-              <button 
-                onClick={() => setCurrentPage('jobVerifier')}
-                className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-purple-600 hover:to-purple-700 transform hover:scale-105 transition-all shadow-lg hover:shadow-xl"
-              >
-                {t.home.cta3}
-              </button>
-            </div>
+            {/* Primary CTA */}
+            <button 
+              onClick={() => setCurrentPage('careerDiscovery')}
+              className="bg-gradient-to-r from-blue-500 to-emerald-500 text-white px-12 py-4 rounded-2xl text-xl font-semibold hover:from-blue-600 hover:to-emerald-600 transform hover:scale-105 transition-all shadow-lg hover:shadow-2xl mb-8"
+            >
+              {t.home.cta1}
+            </button>
           </div>
         </div>
         
         {/* Hero Image */}
         <div className="mt-16 container mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all">
-              <img src="https://images.unsplash.com/photo-1552664730-d307ca884978" alt="Career Planning" className="w-full h-64 object-cover"/>
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-white/20">
+              <img src="https://images.unsplash.com/photo-1712802666269-86b60e108288" alt="Arabic Professional" className="w-full h-80 object-cover rounded-2xl"/>
             </div>
-            <div className="rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all">
-              <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c" alt="Professional Development" className="w-full h-64 object-cover"/>
+          </div>
+        </div>
+      </div>
+
+      {/* Why Arabic Career Support Section */}
+      <div className="py-20 bg-gradient-to-r from-blue-500 to-emerald-500">
+        <div className="container mx-auto px-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-white text-center mb-16">
+            {t.home.whyArabic.title}
+          </h2>
+          
+          <div className="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+            <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
+              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-6">
+                <span className="text-3xl">🗣️</span>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">{t.home.whyArabic.languageBarrier.title}</h3>
+              <p className="text-white/90 text-lg leading-relaxed">
+                {t.home.whyArabic.languageBarrier.description}
+              </p>
             </div>
-            <div className="rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all">
-              <img src="https://images.unsplash.com/photo-1712802666269-86b60e108288" alt="Arabic Youth" className="w-full h-64 object-cover"/>
+            
+            <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
+              <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mb-6">
+                <span className="text-3xl">🕌</span>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">{t.home.whyArabic.culturalSensitivity.title}</h3>
+              <p className="text-white/90 text-lg leading-relaxed">
+                {t.home.whyArabic.culturalSensitivity.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Features Section */}
+      <div className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">{t.home.features.title}</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">{t.home.features.subtitle}</p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+            <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                <span className="text-3xl">💬</span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">{t.home.features.careerChat.title}</h3>
+              <p className="text-gray-600 text-center leading-relaxed">{t.home.features.careerChat.description}</p>
+            </div>
+            
+            <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                <span className="text-3xl">📄</span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">{t.home.features.arabicCV.title}</h3>
+              <p className="text-gray-600 text-center leading-relaxed">{t.home.features.arabicCV.description}</p>
+            </div>
+            
+            <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+              <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                <span className="text-3xl">✅</span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">{t.home.features.islamicVerifier.title}</h3>
+              <p className="text-gray-600 text-center leading-relaxed">{t.home.features.islamicVerifier.description}</p>
+            </div>
+            
+            <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                <span className="text-3xl">🎤</span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">{t.home.features.interviewPractice.title}</h3>
+              <p className="text-gray-600 text-center leading-relaxed">{t.home.features.interviewPractice.description}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Call to Action Section */}
+      <div className="py-20 bg-gradient-to-r from-emerald-500 to-blue-500">
+        <div className="container mx-auto px-6 text-center">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              {t.home.callToAction.title}
+            </h2>
+            <p className="text-xl md:text-2xl text-white/90 mb-12">
+              {t.home.callToAction.subtitle}
+            </p>
+            
+            <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
+              <button 
+                onClick={() => setCurrentPage('careerDiscovery')}
+                className="bg-white text-blue-600 px-12 py-4 rounded-2xl text-xl font-semibold hover:bg-gray-50 transform hover:scale-105 transition-all shadow-lg hover:shadow-2xl"
+              >
+                {t.home.getStarted}
+              </button>
+              <button 
+                onClick={() => setCurrentPage('cvGenerator')}
+                className="bg-white/10 text-white border-2 border-white/30 px-12 py-4 rounded-2xl text-xl font-semibold hover:bg-white/20 transform hover:scale-105 transition-all backdrop-blur-sm"
+              >
+                {t.home.cta2}
+              </button>
             </div>
           </div>
         </div>
