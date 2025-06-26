@@ -5,6 +5,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [language, setLanguage] = useState('arabic');
   const [isRTL, setIsRTL] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Language content
   const content = {
