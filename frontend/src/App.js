@@ -513,8 +513,8 @@ function App() {
     const renderLanguageSelection = () => (
       <div className="space-y-8">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">اختر لغة السيرة الذاتية</h2>
-          <p className="text-gray-600">حدد اللغة التي تريد إنشاء السيرة الذاتية بها</p>
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">{cvContent.cvGenerator.step2Title}</h2>
+          <p className="text-gray-600">{cvContent.cvGenerator.step2Subtitle}</p>
         </div>
         
         <div className="flex justify-center space-x-6 space-x-reverse">
