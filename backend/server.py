@@ -5,6 +5,10 @@ from typing import List, Optional
 import os
 from pymongo import MongoClient
 import uuid
+from agents import career_recommednation_agent
+import json
+
+print("Hello World")  #Testing
 
 app = FastAPI()
 
@@ -54,28 +58,10 @@ async def root():
 async def get_career_recommendations(data: CareerInterest):
     # Placeholder for Fanar AI integration
     # Mock response for now
-    mock_careers = [
-        {
-            "title": "Althaf",
-            "description": "تطوير التطبيقات والمواقع الإلكترونية باستخدام أحدث التقنيات",
-            "skills_needed": ["البرمجة", "حل المشكلات", "العمل الجماعي"],
-            "salary_range": "15,000 - 25,000 ريال"
-        },
-        {
-            "title": "مصمم جرافيك",
-            "description": "إنشاء التصميمات البصرية للعلامات التجارية والمنتجات",
-            "skills_needed": ["الإبداع", "برامج التصميم", "التواصل البصري"],
-            "salary_range": "8,000 - 18,000 ريال"
-        },
-        {
-            "title": "محلل بيانات",
-            "description": "تحليل البيانات واستخراج الرؤى التجارية المفيدة",
-            "skills_needed": ["الرياضيات", "البرمجة", "التحليل النقدي"],
-            "salary_range": "12,000 - 22,000 ريال"
-        }
-    ]
+    json_response = career_recommednation_agent(data)
+    career_list = json.loads(json_response)
     
-    return {"careers": mock_careers, "language": data.language}
+    return {"careers": career_list, "language": data.language}
 
 @app.post("/api/generate-cv")
 async def generate_cv(data: CVData):
