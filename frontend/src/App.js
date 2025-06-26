@@ -478,8 +478,8 @@ function App() {
     const renderTemplateSelection = () => (
       <div className="space-y-8">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">اختر قالب السيرة الذاتية</h2>
-          <p className="text-gray-600">اختر التصميم الذي يناسب مجالك المهني</p>
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">{cvContent.cvGenerator.step1Title}</h2>
+          <p className="text-gray-600">{cvContent.cvGenerator.step1Subtitle}</p>
         </div>
         
         <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -499,7 +499,7 @@ function App() {
               <div className="text-center">
                 <div className="text-6xl mb-4">{template.preview}</div>
                 <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                  {language === 'arabic' ? template.name : template.nameEn}
+                  {template.name}
                 </h3>
                 <div className={`w-12 h-1 bg-gradient-to-r from-${template.color}-400 to-${template.color}-600 mx-auto rounded-full`}></div>
               </div>
