@@ -36,13 +36,50 @@ function App() {
       cvGenerator: {
         title: 'مولد السيرة الذاتية العربية',
         subtitle: 'أنشئ سيرة ذاتية احترافية بالذكاء الاصطناعي',
+        smartTitle: 'مولد السيرة الذاتية الذكي',
+        smartSubtitle: 'أنشئ سيرة ذاتية احترافية في 3 خطوات بسيطة',
+        step1Title: 'اختر قالب السيرة الذاتية',
+        step1Subtitle: 'اختر التصميم الذي يناسب مجالك المهني',
+        step2Title: 'اختر لغة السيرة الذاتية',
+        step2Subtitle: 'حدد اللغة التي تريد إنشاء السيرة الذاتية بها',
+        step3Title: 'معلومات السيرة الذاتية',
+        livePreview: 'معاينة مباشرة',
+        templates: {
+          classic: 'كلاسيكي',
+          modern: 'حديث',
+          creative: 'إبداعي'
+        },
         fullName: 'الاسم الكامل',
-        careerGoal: 'الهدف المهني',
+        jobTitle: 'المسمى الوظيفي',
         skills: 'المهارات',
         experience: 'الخبرة',
-        education: 'التعليم',
-        languages: 'اللغات',
-        generateBtn: 'إنشاء السيرة الذاتية'
+        fullNamePlaceholder: 'أدخل اسمك الكامل',
+        jobTitlePlaceholder: 'مثال: مطور برمجيات',
+        skillsPlaceholder: 'مثال: JavaScript, Python, React...',
+        experiencePlaceholder: 'اكتب خبراتك العملية...',
+        previewPlaceholders: {
+          name: 'اسم المتقدم',
+          jobTitle: 'المسمى الوظيفي',
+          skills: 'المهارات التقنية والشخصية...',
+          experience: 'تفاصيل الخبرة العملية والإنجازات...'
+        },
+        buttons: {
+          previous: 'السابق',
+          generate: 'إنشاء السيرة الذاتية',
+          generating: 'جاري الإنشاء...',
+          download: 'تحميل السيرة الذاتية',
+          newCV: 'إنشاء سيرة ذاتية جديدة'
+        },
+        success: {
+          title: 'تم إنشاء السيرة الذاتية بنجاح!',
+          subtitle: 'جاهزة للتحميل بصيغة Word'
+        },
+        errors: {
+          fullNameRequired: 'الاسم الكامل مطلوب',
+          jobTitleRequired: 'المسمى الوظيفي مطلوب',
+          skillsRequired: 'المهارات مطلوبة',
+          experienceRequired: 'الخبرة مطلوبة'
+        }
       },
       interviewTrainer: {
         title: 'مدرب المقابلات',
