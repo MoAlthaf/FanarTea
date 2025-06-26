@@ -532,8 +532,8 @@ function App() {
   const renderHomePage = () => (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-blue-50 via-emerald-50 to-white py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-emerald-500/5"></div>
+      <div className={`relative ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-emerald-900' : 'bg-gradient-to-br from-blue-50 via-emerald-50 to-white'} py-20 overflow-hidden`}>
+        <div className={`absolute inset-0 ${isDarkMode ? 'bg-gradient-to-r from-blue-500/10 to-emerald-500/10' : 'bg-gradient-to-r from-blue-500/5 to-emerald-500/5'}`}></div>
         <div className="relative container mx-auto px-6 text-center">
           <div className="max-w-4xl mx-auto">
             {/* Logo */}
@@ -544,10 +544,10 @@ function App() {
             <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-blue-600 via-emerald-600 to-blue-700 bg-clip-text text-transparent mb-6">
               {t.home.title}
             </h1>
-            <p className="text-2xl md:text-4xl text-gray-700 mb-8 font-medium">
+            <p className={`text-2xl md:text-4xl ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} mb-8 font-medium`}>
               {t.home.subtitle}
             </p>
-            <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className={`text-lg md:text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mb-12 max-w-3xl mx-auto leading-relaxed`}>
               {t.home.description}
             </p>
             
@@ -564,7 +564,7 @@ function App() {
         {/* Hero Image */}
         <div className="mt-16 container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-white/20">
+            <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white/60'} backdrop-blur-sm rounded-3xl p-8 shadow-2xl border ${isDarkMode ? 'border-gray-700/20' : 'border-white/20'}`}>
               <img src="https://images.unsplash.com/photo-1712802666269-86b60e108288" alt="Arabic Professional" className="w-full h-80 object-cover rounded-2xl"/>
             </div>
           </div>
@@ -572,7 +572,7 @@ function App() {
       </div>
 
       {/* Why Arabic Career Support Section */}
-      <div className="py-20 bg-gradient-to-r from-blue-500 to-emerald-500">
+      <div className={`py-20 ${isDarkMode ? 'bg-gradient-to-r from-blue-700 to-emerald-700' : 'bg-gradient-to-r from-blue-500 to-emerald-500'}`}>
         <div className="container mx-auto px-6">
           <h2 className="text-4xl md:text-5xl font-bold text-white text-center mb-16">
             {t.home.whyArabic.title}
@@ -603,51 +603,51 @@ function App() {
       </div>
 
       {/* Features Section */}
-      <div className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+      <div className={`py-20 ${isDarkMode ? 'bg-gradient-to-br from-gray-900 to-blue-900' : 'bg-gradient-to-br from-gray-50 to-blue-50'}`}>
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">{t.home.features.title}</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">{t.home.features.subtitle}</p>
+            <h2 className={`text-4xl md:text-5xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-6`}>{t.home.features.title}</h2>
+            <p className={`text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} max-w-3xl mx-auto`}>{t.home.features.subtitle}</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-            <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+            <div className={`${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white border-gray-100'} rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border backdrop-blur-sm`}>
               <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                 <span className="text-3xl">💬</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">{t.home.features.careerChat.title}</h3>
-              <p className="text-gray-600 text-center leading-relaxed">{t.home.features.careerChat.description}</p>
+              <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4 text-center`}>{t.home.features.careerChat.title}</h3>
+              <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} text-center leading-relaxed`}>{t.home.features.careerChat.description}</p>
             </div>
             
-            <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+            <div className={`${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white border-gray-100'} rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border backdrop-blur-sm`}>
               <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                 <span className="text-3xl">📄</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">{t.home.features.arabicCV.title}</h3>
-              <p className="text-gray-600 text-center leading-relaxed">{t.home.features.arabicCV.description}</p>
+              <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4 text-center`}>{t.home.features.arabicCV.title}</h3>
+              <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} text-center leading-relaxed`}>{t.home.features.arabicCV.description}</p>
             </div>
             
-            <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+            <div className={`${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white border-gray-100'} rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border backdrop-blur-sm`}>
               <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                 <span className="text-3xl">✅</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">{t.home.features.islamicVerifier.title}</h3>
-              <p className="text-gray-600 text-center leading-relaxed">{t.home.features.islamicVerifier.description}</p>
+              <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4 text-center`}>{t.home.features.islamicVerifier.title}</h3>
+              <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} text-center leading-relaxed`}>{t.home.features.islamicVerifier.description}</p>
             </div>
             
-            <div className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
+            <div className={`${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white border-gray-100'} rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border backdrop-blur-sm`}>
               <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
                 <span className="text-3xl">🎤</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">{t.home.features.interviewPractice.title}</h3>
-              <p className="text-gray-600 text-center leading-relaxed">{t.home.features.interviewPractice.description}</p>
+              <h3 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4 text-center`}>{t.home.features.interviewPractice.title}</h3>
+              <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} text-center leading-relaxed`}>{t.home.features.interviewPractice.description}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Call to Action Section */}
-      <div className="py-20 bg-gradient-to-r from-emerald-500 to-blue-500">
+      <div className={`py-20 ${isDarkMode ? 'bg-gradient-to-r from-emerald-700 to-blue-700' : 'bg-gradient-to-r from-emerald-500 to-blue-500'}`}>
         <div className="container mx-auto px-6 text-center">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
