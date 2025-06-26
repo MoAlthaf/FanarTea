@@ -155,12 +155,48 @@ function App() {
         about: 'About'
       },
       home: {
-        title: 'Fanar Career Compass',
-        subtitle: 'Empowering the future of Arabic youth through AI',
-        description: 'Discover your ideal career, build your CV, practice interviews, and verify job offers against Islamic values',
-        cta1: 'Start Career Journey',
+        title: 'Wasila',
+        subtitle: 'Empowering Youth with Ethical Career Tools',
+        description: 'Wasila helps you discover your future while staying true to your values',
+        cta1: 'Start Your Journey',
         cta2: 'Try CV Generator',
-        cta3: 'Verify Job Offer'
+        cta3: 'Verify Job Offer',
+        getStarted: 'Get Started',
+        whyArabic: {
+          title: 'Why Arabic Career Support?',
+          languageBarrier: {
+            title: 'Language Barrier',
+            description: 'Many Arabic youth face difficulty expressing their career goals in English'
+          },
+          culturalSensitivity: {
+            title: 'Cultural Sensitivity',
+            description: 'We understand the Islamic and Arab-specific needs in today\'s workforce'
+          }
+        },
+        features: {
+          title: 'Wasila Features',
+          subtitle: 'Join thousands of youth building their careers with Wasila',
+          careerChat: {
+            title: 'Career Discovery Chat',
+            description: 'Discover your ideal career through intelligent conversation'
+          },
+          arabicCV: {
+            title: 'Arabic CV Generator',
+            description: 'Create professional resumes in Arabic'
+          },
+          islamicVerifier: {
+            title: 'Islamic Job Verifier',
+            description: 'Ensure job compatibility with Islamic values'
+          },
+          interviewPractice: {
+            title: 'Interview Practice in Arabic',
+            description: 'Practice interviews in your native language'
+          }
+        },
+        callToAction: {
+          title: 'Get Started for Free',
+          subtitle: 'Join thousands of youth building their careers with Wasila'
+        }
       },
       careerDiscovery: {
         title: 'Career Discovery',
