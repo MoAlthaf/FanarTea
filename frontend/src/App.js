@@ -277,12 +277,7 @@ function App() {
     setIsGeneratingCV(false);
   };
 
-  const downloadCV = () => {
-    // In real implementation, this would download the actual file
-    alert('تم تحميل السيرة الذاتية بنجاح!');
-  };
-
-  const resetCVGenerator = () => {
+  // Removed duplicate functions
     setCvStep(1);
     setSelectedTemplate(null);
     setCvLanguage('arabic');
