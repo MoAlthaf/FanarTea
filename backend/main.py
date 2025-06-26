@@ -8,7 +8,6 @@ import uuid
 from agents import career_recommednation_agent
 import json
 
-print("Hello World")  #Testing
 
 app = FastAPI()
 

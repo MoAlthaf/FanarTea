@@ -52,6 +52,9 @@ __pycache__/
 venv/
 .venv/
 
+# Python virtual environments
+backend/myenv/
+
 # Development tools
 chainlit.md
 .chainlit

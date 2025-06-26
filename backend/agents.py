@@ -1,4 +1,4 @@
-import openai openai
+from openai import OpenAI
 
 
 client= OpenAI(
@@ -44,4 +44,5 @@ def career_recommednation_agent(prompt):
     return response
 
 
-def speech_to_text_agent()
+def speech_to_text_agent():
+    return True
