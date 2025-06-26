@@ -132,7 +132,10 @@ function App() {
         interestsLabel: 'What are your interests?',
         interestsPlaceholder: 'Example: I love animals, science, working with people, art...',
         submitBtn: 'Get Career Recommendations',
-        askMoreBtn: 'Ask more'
+        askMoreBtn: 'Ask more',
+        analyzing: 'Analyzing...',
+        skillsNeeded: 'Skills needed:',
+        expectedSalary: 'Expected salary:'
       },
       cvGenerator: {
         title: 'Arabic CV Generator',
