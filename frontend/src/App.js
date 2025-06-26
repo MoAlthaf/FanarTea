@@ -1289,9 +1289,9 @@ function App() {
   };
 
   return (
-    <div className={`min-h-screen ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className={`min-h-screen ${isRTL ? 'rtl' : 'ltr'} ${isDarkMode ? 'dark bg-gray-900' : 'bg-white'}`} dir={isRTL ? 'rtl' : 'ltr'}>
       {/* Navigation */}
-      <nav className="bg-white/90 backdrop-blur-sm shadow-lg sticky top-0 z-50 border-b border-gray-100">
+      <nav className={`${isDarkMode ? 'bg-gray-800/90' : 'bg-white/90'} backdrop-blur-sm shadow-lg sticky top-0 z-50 border-b ${isDarkMode ? 'border-gray-700' : 'border-gray-100'}`}>
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4 space-x-reverse">
@@ -1311,7 +1311,7 @@ function App() {
                   className={`px-4 py-2 rounded-xl font-medium transition-all ${
                     currentPage === key 
                       ? 'bg-gradient-to-r from-blue-500 to-emerald-500 text-white shadow-lg' 
-                      : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                      : `${isDarkMode ? 'text-gray-300 hover:text-blue-400 hover:bg-gray-700' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`
                   }`}
                 >
                   {value}
@@ -1319,12 +1319,23 @@ function App() {
               ))}
             </div>
             
-            <button 
-              onClick={toggleLanguage}
-              className="bg-gradient-to-r from-blue-500 to-emerald-500 text-white px-6 py-2 rounded-xl font-medium hover:from-blue-600 hover:to-emerald-600 transition-all shadow-lg"
-            >
-              {language === 'arabic' ? 'EN' : 'عر'}
-            </button>
+            <div className="flex items-center space-x-3 space-x-reverse">
+              {/* Dark Mode Toggle */}
+              <button
+                onClick={toggleDarkMode}
+                className={`p-2 rounded-lg transition-all ${isDarkMode ? 'bg-gray-700 text-yellow-400 hover:bg-gray-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              >
+                {isDarkMode ? '☀️' : '🌙'}
+              </button>
+              
+              {/* Language Toggle */}
+              <button 
+                onClick={toggleLanguage}
+                className="bg-gradient-to-r from-blue-500 to-emerald-500 text-white px-6 py-2 rounded-xl font-medium hover:from-blue-600 hover:to-emerald-600 transition-all shadow-lg"
+              >
+                {language === 'arabic' ? 'EN' : 'عر'}
+              </button>
+            </div>
           </div>
         </div>
       </nav>
