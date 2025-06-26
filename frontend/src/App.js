@@ -274,13 +274,14 @@ function App() {
         nonCompliant: '⚠️ Not fully compliant'
       },
       about: {
-        title: 'About Fanar Career Compass',
+        title: 'About Wasila',
+        description: 'We are an innovative digital platform aimed at empowering Arabic youth to build a successful professional future aligned with Islamic values. Our AI-based tools are accessible, ethical, and culturally aware.',
         mission: 'Our Mission',
-        missionText: 'We strive to empower Arabic youth to make informed career decisions that align with their values and aspirations',
-        importance: 'Why Arabic Career Support Matters?',
-        importanceText: 'Arabic youth deserve career guidance in their native language that understands their culture and values',
-        islamicValues: 'Why Islamic Values Matter in Modern Jobs?',
-        islamicValuesText: 'We believe in the importance of balancing professional success with commitment to Islamic values'
+        missionText: 'To bridge the gap between modern technology and Arab-Islamic culture by providing smart tools that help Arabic youth discover careers, build resumes, and train for interviews—all while staying true to their values.',
+        innovation: 'Innovation & Culture',
+        innovationText: 'We combine cutting-edge AI technology with deep understanding of Arab-Islamic culture',
+        impact: 'Community Impact',
+        impactText: 'We help thousands of Arabic youth build successful careers that align with their values and aspirations'
       }
     }
   };
