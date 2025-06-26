@@ -1207,7 +1207,7 @@ function App() {
   );
 
   const renderAboutPage = () => (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-emerald-50 to-white py-12">
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-emerald-900' : 'bg-gradient-to-br from-blue-50 via-emerald-50 to-white'} py-12`}>
       <div className="container mx-auto px-6">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
@@ -1218,21 +1218,21 @@ function App() {
             <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-emerald-600 bg-clip-text text-transparent mb-6">
               {t.about.title}
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            <p className={`text-xl md:text-2xl ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} max-w-4xl mx-auto leading-relaxed`}>
               {t.about.description}
             </p>
           </div>
           
           {/* Mission Section */}
           <div className="mb-16">
-            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-10 shadow-xl border border-white/20">
+            <div className={`${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/60 border-white/20'} backdrop-blur-sm rounded-3xl p-10 shadow-xl border`}>
               <div className="flex items-center mb-6">
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mr-6 ml-6">
                   <span className="text-3xl">🎯</span>
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-800">{t.about.mission}</h2>
+                <h2 className={`text-3xl md:text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{t.about.mission}</h2>
               </div>
-              <p className="text-lg md:text-xl text-gray-700 leading-relaxed">
+              <p className={`text-lg md:text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
                 {t.about.missionText}
               </p>
             </div>
@@ -1240,33 +1240,33 @@ function App() {
           
           {/* Innovation & Impact Grid */}
           <div className="grid md:grid-cols-2 gap-8 mb-16">
-            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20">
+            <div className={`${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/60 border-white/20'} backdrop-blur-sm rounded-3xl p-8 shadow-xl border`}>
               <div className="flex items-center mb-6">
                 <div className="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center mr-4 ml-4">
                   <span className="text-3xl">🚀</span>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800">{t.about.innovation}</h3>
+                <h3 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{t.about.innovation}</h3>
               </div>
-              <p className="text-gray-700 leading-relaxed">
+              <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
                 {t.about.innovationText}
               </p>
             </div>
             
-            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20">
+            <div className={`${isDarkMode ? 'bg-gray-800/60 border-gray-700' : 'bg-white/60 border-white/20'} backdrop-blur-sm rounded-3xl p-8 shadow-xl border`}>
               <div className="flex items-center mb-6">
                 <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mr-4 ml-4">
                   <span className="text-3xl">💫</span>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800">{t.about.impact}</h3>
+                <h3 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{t.about.impact}</h3>
               </div>
-              <p className="text-gray-700 leading-relaxed">
+              <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-700'} leading-relaxed`}>
                 {t.about.impactText}
               </p>
             </div>
           </div>
 
           {/* Team Section Placeholder */}
-          <div className="bg-gradient-to-r from-blue-500 to-emerald-500 rounded-3xl p-10 text-center text-white">
+          <div className={`${isDarkMode ? 'bg-gradient-to-r from-blue-700 to-emerald-700' : 'bg-gradient-to-r from-blue-500 to-emerald-500'} rounded-3xl p-10 text-center text-white`}>
             <h3 className="text-3xl font-bold mb-6">Our Team</h3>
             <p className="text-xl mb-8 opacity-90">
               A passionate team of developers, designers, and cultural experts working to empower Arabic youth
