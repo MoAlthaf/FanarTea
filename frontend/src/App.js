@@ -182,17 +182,6 @@ function App() {
     }, 2000);
   };
 
-  // CV Generator Functions
-  const validateCVForm = () => {
-    const errors = {};
-    if (!cvData.fullName.trim()) errors.fullName = 'الاسم الكامل مطلوب';
-    if (!cvData.jobTitle.trim()) errors.jobTitle = 'المسمى الوظيفي مطلوب';
-    if (!cvData.skills.trim()) errors.skills = 'المهارات مطلوبة';
-    if (!cvData.experience.trim()) errors.experience = 'الخبرة مطلوبة';
-    
-    setCvErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
 
   // CV Generator Functions
   const validateCVForm = () => {
