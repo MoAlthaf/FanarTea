@@ -290,7 +290,8 @@ function App() {
           experience: cvData.experience,
           education: '', // Can be added later
           languages: [cvLanguage === 'arabic' ? 'العربية' : 'English'],
-          cv_language: cvLanguage
+          cv_language: cvLanguage,
+          interface_language: language // Send the interface language to backend
         }),
       });
 
