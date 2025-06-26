@@ -143,10 +143,18 @@ function App() {
   // State for different pages
   const [careerResults, setCareerResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // CV Generator state
+  const [cvStep, setCvStep] = useState(1);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [cvLanguage, setCvLanguage] = useState('arabic');
   const [cvData, setCvData] = useState({
-    fullName: '', careerGoal: '', skills: '', experience: '', education: '', languages: []
+    fullName: '', jobTitle: '', skills: '', experience: ''
   });
-  const [generatedCV, setGeneratedCV] = useState('');
+  const [cvErrors, setCvErrors] = useState({});
+  const [generatedCVFile, setGeneratedCVFile] = useState(null);
+  const [isGeneratingCV, setIsGeneratingCV] = useState(false);
+  
   const [interviewFeedback, setInterviewFeedback] = useState(null);
   const [jobVerifierResult, setJobVerifierResult] = useState(null);
 

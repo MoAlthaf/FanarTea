@@ -56,7 +56,7 @@ async def get_career_recommendations(data: CareerInterest):
     # Mock response for now
     mock_careers = [
         {
-            "title": "مطور برمجيات",
+            "title": "Althaf",
             "description": "تطوير التطبيقات والمواقع الإلكترونية باستخدام أحدث التقنيات",
             "skills_needed": ["البرمجة", "حل المشكلات", "العمل الجماعي"],
             "salary_range": "15,000 - 25,000 ريال"
