@@ -277,16 +277,6 @@ function App() {
     setIsGeneratingCV(false);
   };
 
-  // Removed duplicate functions
-    setCvStep(1);
-    setSelectedTemplate(null);
-    setCvLanguage('arabic');
-    setCvData({ fullName: '', jobTitle: '', skills: '', experience: '' });
-    setCvErrors({});
-    setGeneratedCVFile(null);
-    setIsGeneratingCV(false);
-  };
-
   const renderHomePage = () => (
     <div className="min-h-screen">
       {/* Hero Section */}
