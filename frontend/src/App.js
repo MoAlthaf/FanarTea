@@ -235,9 +235,58 @@ function App() {
   // Mock API calls (will be replaced with your Fanar AI integration)
   const handleCareerDiscovery = async (interests) => {
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      const mockCareers = [
+    
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/api/career-recommendation`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          interests: interests,
+          language: language // Send the interface language to backend
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setCareerResults(result.careers);
+      } else {
+        // Fallback to mock data
+        const mockCareers = language === 'arabic' ? [
+          {
+            title: 'مطور برمجيات',
+            description: 'تطوير التطبيقات والمواقع الإلكترونية باستخدام أحدث التقنيات',
+            skills_needed: ['البرمجة', 'حل المشكلات', 'العمل الجماعي'],
+            salary_range: '15,000 - 25,000 ريال'
+          },
+          {
+            title: 'مصمم جرافيك',
+            description: 'إنشاء التصميمات البصرية للعلامات التجارية والمنتجات',
+            skills_needed: ['الإبداع', 'برامج التصميم', 'التواصل البصري'],
+            salary_range: '8,000 - 18,000 ريال'
+          }
+        ] : [
+          {
+            title: 'Software Developer',
+            description: 'Develop applications and websites using the latest technologies',
+            skills_needed: ['Programming', 'Problem Solving', 'Teamwork'],
+            salary_range: '$4,000 - $6,500'
+          },
+          {
+            title: 'Graphic Designer',
+            description: 'Create visual designs for brands and products',
+            skills_needed: ['Creativity', 'Design Software', 'Visual Communication'],
+            salary_range: '$2,200 - $4,800'
+          }
+        ];
+        setCareerResults(mockCareers);
+      }
+    } catch (error) {
+      console.error('Career Discovery Error:', error);
+      // Fallback to mock data
+      const mockCareers = language === 'arabic' ? [
         {
           title: 'مطور برمجيات',
           description: 'تطوير التطبيقات والمواقع الإلكترونية باستخدام أحدث التقنيات',
@@ -250,10 +299,24 @@ function App() {
           skills_needed: ['الإبداع', 'برامج التصميم', 'التواصل البصري'],
           salary_range: '8,000 - 18,000 ريال'
         }
+      ] : [
+        {
+          title: 'Software Developer',
+          description: 'Develop applications and websites using the latest technologies',
+          skills_needed: ['Programming', 'Problem Solving', 'Teamwork'],
+          salary_range: '$4,000 - $6,500'
+        },
+        {
+          title: 'Graphic Designer',
+          description: 'Create visual designs for brands and products',
+          skills_needed: ['Creativity', 'Design Software', 'Visual Communication'],
+          salary_range: '$2,200 - $4,800'
+        }
       ];
       setCareerResults(mockCareers);
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
 
