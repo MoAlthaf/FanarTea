@@ -31,7 +31,10 @@ function App() {
         interestsLabel: 'ما هي اهتماماتك؟',
         interestsPlaceholder: 'مثال: أحب الحيوانات، العلوم، التعامل مع الناس، الفن...',
         submitBtn: 'احصل على توصيات مهنية',
-        askMoreBtn: 'اسأل المزيد'
+        askMoreBtn: 'اسأل المزيد',
+        analyzing: 'جاري التحليل...',
+        skillsNeeded: 'المهارات المطلوبة:',
+        expectedSalary: 'الراتب المتوقع:'
       },
       cvGenerator: {
         title: 'مولد السيرة الذاتية العربية',
