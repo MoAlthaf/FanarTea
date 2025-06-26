@@ -293,6 +293,10 @@ function App() {
     setIsRTL(newLang === 'arabic');
   };
 
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   const t = content[language];
 
   // State for different pages
