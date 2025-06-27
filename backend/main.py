@@ -7,9 +7,11 @@ from pymongo import MongoClient
 import uuid
 from agents import career_recommednation_agent
 import json
-
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # CORS middleware
 app.add_middleware(
@@ -116,6 +118,7 @@ async def check_sharia_compliance(data: JobOfferData):
     }
     
     return mock_result
+
 
 if __name__ == "__main__":
     import uvicorn
