@@ -1,5 +1,7 @@
 from docxtpl import DocxTemplate
 from pathlib import Path
+from docx2pdf import convert
+
 
 def generate_cv(template_name: str, user_data: dict, language: str) -> str:
     BASE_DIR = Path(__file__).resolve().parent
@@ -15,7 +17,9 @@ def generate_cv(template_name: str, user_data: dict, language: str) -> str:
     output_path.parent.mkdir(parents=True, exist_ok=True)  # Ensure the folder exists
 
     doc.save(output_path)
-    return str(output_path)
+    pdf_output_path = output_path.with_suffix(".pdf")
+    convert(str(output_path), str(pdf_output_path))
+    return str(pdf_output_path)
 
 # Example user data for testing
 if __name__ == "__main__":
