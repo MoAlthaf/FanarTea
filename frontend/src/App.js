@@ -842,124 +842,104 @@ function App() {
     );
 
     // Step 3: CV Form
-    const renderCVForm = () => (
-      <div className={`grid lg:grid-cols-2 gap-8 ${cvLanguage === 'arabic' ? 'rtl' : 'ltr'}`}>
-        {/* Form */}
-        <div className="space-y-6">
-          <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200">
-            <h3 className="text-2xl font-bold text-gray-800 mb-6">
-              {cvContent.cvGenerator.step3Title}
-            </h3>
-            
-            <div className="space-y-6">
-              <div>
-                <label className="block font-semibold text-gray-700 mb-2">
-                  {cvContent.cvGenerator.fullName}
-                </label>
-                <input
-                  type="text"
-                  value={cvData.fullName}
-                  onChange={(e) => setCvData({...cvData, fullName: e.target.value})}
-                  className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all ${
-                    cvErrors.fullName ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
-                  }`}
-                  placeholder={cvContent.cvGenerator.fullNamePlaceholder}
-                />
-                {cvErrors.fullName && <p className="text-red-500 text-sm mt-1">{cvErrors.fullName}</p>}
-              </div>
+    const renderCVForm = () => {
+      // Move these calculations outside JSX
+      const fileName = `${cvLanguage}_${selectedTemplate.name}.pdf`;
+      const fileUrl = `${process.env.REACT_APP_BACKEND_URL}/static/resumes/${fileName}`;
 
-              <div>
-                <label className="block font-semibold text-gray-700 mb-2">
-                  {cvContent.cvGenerator.jobTitle}
-                </label>
-                <input
-                  type="text"
-                  value={cvData.jobTitle}
-                  onChange={(e) => setCvData({...cvData, jobTitle: e.target.value})}
-                  className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all ${
-                    cvErrors.jobTitle ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
-                  }`}
-                  placeholder={cvContent.cvGenerator.jobTitlePlaceholder}
-                />
-                {cvErrors.jobTitle && <p className="text-red-500 text-sm mt-1">{cvErrors.jobTitle}</p>}
-              </div>
+      return (
+        <div className={`grid lg:grid-cols-2 gap-8 ${cvLanguage === 'arabic' ? 'rtl' : 'ltr'}`}>
+          {/* Form */}
+          <div className="space-y-6">
+            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6">
+                {cvContent.cvGenerator.step3Title}
+              </h3>
 
-              <div>
-                <label className="block font-semibold text-gray-700 mb-2">
-                  {cvContent.cvGenerator.skills}
-                </label>
-                <textarea
-                  value={cvData.skills}
-                  onChange={(e) => setCvData({...cvData, skills: e.target.value})}
-                  className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all resize-none h-32 ${
-                    cvErrors.skills ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
-                  }`}
-                  placeholder={cvContent.cvGenerator.skillsPlaceholder}
-                />
-                {cvErrors.skills && <p className="text-red-500 text-sm mt-1">{cvErrors.skills}</p>}
-              </div>
-
-              <div>
-                <label className="block font-semibold text-gray-700 mb-2">
-                  {cvContent.cvGenerator.experience}
-                </label>
-                <textarea
-                  value={cvData.experience}
-                  onChange={(e) => setCvData({...cvData, experience: e.target.value})}
-                  className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all resize-none h-40 ${
-                    cvErrors.experience ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
-                  }`}
-                  placeholder={cvContent.cvGenerator.experiencePlaceholder}
-                />
-                {cvErrors.experience && <p className="text-red-500 text-sm mt-1">{cvErrors.experience}</p>}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Live Preview */}
-        <div className="space-y-6">
-          <div className={`bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200 min-h-[600px] ${selectedTemplate?.color === 'blue' ? 'border-l-4 border-l-blue-500' : selectedTemplate?.color === 'emerald' ? 'border-l-4 border-l-emerald-500' : 'border-l-4 border-l-purple-500'}`}>
-            <h3 className="text-2xl font-bold text-gray-800 mb-6">
-              {cvContent.cvGenerator.livePreview}
-            </h3>
-            
-            <div className={`space-y-6 ${cvLanguage === 'arabic' ? 'text-right' : 'text-left'}`}>
-              <div>
-                <h2 className={`text-3xl font-bold mb-2 ${selectedTemplate?.color === 'blue' ? 'text-blue-600' : selectedTemplate?.color === 'emerald' ? 'text-emerald-600' : 'text-purple-600'}`}>
-                  {cvData.fullName || cvContent.cvGenerator.previewPlaceholders.name}
-                </h2>
-                <p className="text-xl text-gray-600">
-                  {cvData.jobTitle || cvContent.cvGenerator.previewPlaceholders.jobTitle}
-                </p>
-              </div>
-
-              <div>
-                <h3 className={`text-xl font-bold mb-3 ${selectedTemplate?.color === 'blue' ? 'text-blue-600' : selectedTemplate?.color === 'emerald' ? 'text-emerald-600' : 'text-purple-600'}`}>
-                  {cvContent.cvGenerator.skills}
-                </h3>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-gray-700 whitespace-pre-wrap">
-                    {cvData.skills || cvContent.cvGenerator.previewPlaceholders.skills}
-                  </p>
+              <div className="space-y-6">
+                {/* Full Name */}
+                <div>
+                  <label className="block font-semibold text-gray-700 mb-2">
+                    {cvContent.cvGenerator.fullName}
+                  </label>
+                  <input
+                    type="text"
+                    value={cvData.fullName}
+                    onChange={(e) => setCvData({ ...cvData, fullName: e.target.value })}
+                    className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all ${
+                      cvErrors.fullName ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
+                    }`}
+                    placeholder={cvContent.cvGenerator.fullNamePlaceholder}
+                  />
+                  {cvErrors.fullName && <p className="text-red-500 text-sm mt-1">{cvErrors.fullName}</p>}
                 </div>
-              </div>
 
-              <div>
-                <h3 className={`text-xl font-bold mb-3 ${selectedTemplate?.color === 'blue' ? 'text-blue-600' : selectedTemplate?.color === 'emerald' ? 'text-emerald-600' : 'text-purple-600'}`}>
-                  {cvContent.cvGenerator.experience}
-                </h3>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-gray-700 whitespace-pre-wrap">
-                    {cvData.experience || cvContent.cvGenerator.previewPlaceholders.experience}
-                  </p>
+                {/* Job Title */}
+                <div>
+                  <label className="block font-semibold text-gray-700 mb-2">
+                    {cvContent.cvGenerator.jobTitle}
+                  </label>
+                  <input
+                    type="text"
+                    value={cvData.jobTitle}
+                    onChange={(e) => setCvData({ ...cvData, jobTitle: e.target.value })}
+                    className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all ${
+                      cvErrors.jobTitle ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
+                    }`}
+                    placeholder={cvContent.cvGenerator.jobTitlePlaceholder}
+                  />
+                  {cvErrors.jobTitle && <p className="text-red-500 text-sm mt-1">{cvErrors.jobTitle}</p>}
+                </div>
+
+                {/* Skills */}
+                <div>
+                  <label className="block font-semibold text-gray-700 mb-2">
+                    {cvContent.cvGenerator.skills}
+                  </label>
+                  <textarea
+                    value={cvData.skills}
+                    onChange={(e) => setCvData({ ...cvData, skills: e.target.value })}
+                    className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all resize-none h-32 ${
+                      cvErrors.skills ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
+                    }`}
+                    placeholder={cvContent.cvGenerator.skillsPlaceholder}
+                  />
+                  {cvErrors.skills && <p className="text-red-500 text-sm mt-1">{cvErrors.skills}</p>}
+                </div>
+
+                {/* Experience */}
+                <div>
+                  <label className="block font-semibold text-gray-700 mb-2">
+                    {cvContent.cvGenerator.experience}
+                  </label>
+                  <textarea
+                    value={cvData.experience}
+                    onChange={(e) => setCvData({ ...cvData, experience: e.target.value })}
+                    className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all resize-none h-40 ${
+                      cvErrors.experience ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
+                    }`}
+                    placeholder={cvContent.cvGenerator.experiencePlaceholder}
+                  />
+                  {cvErrors.experience && <p className="text-red-500 text-sm mt-1">{cvErrors.experience}</p>}
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Live Preview */}
+          <div className="w-full h-[600px] rounded-lg overflow-hidden border shadow">
+            <iframe
+              src={fileUrl}
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              title="Live Resume Preview"
+            />
+          </div>
         </div>
-      </div>
-    );
+      );
+    };
+
 
     // Progress Steps
     const renderProgressSteps = () => (
