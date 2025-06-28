@@ -1,13 +1,14 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File, APIRouter, Body
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 import os
 from pymongo import MongoClient
 import uuid
-from agents import career_recommednation_agent
+from agents import career_recommednation_agent, islamic_rag_job_verifier
 import json
 from fastapi.staticfiles import StaticFiles
+import shutil
 
 app = FastAPI()
 
@@ -93,7 +94,7 @@ async def generate_cv(data: CVData):
 async def get_interview_feedback(data: InterviewQuestion):
     # Placeholder for Fanar AI integration
     mock_feedback = {
-        "score": 85,
+        "score": 100,
         "feedback": "إجابة جيدة! يمكنك تحسين الثقة في الصوت وإضافة المزيد من الأمثلة العملية.",
         "suggestions": [
             "استخدم أمثلة محددة من خبرتك",
@@ -105,21 +106,24 @@ async def get_interview_feedback(data: InterviewQuestion):
     return mock_feedback
 
 @app.post("/api/sharia-check")
-async def check_sharia_compliance(data: JobOfferData):
-    # Placeholder for Fanar AI integration
-    mock_result = {
-        "is_compliant": True,
-        "compliance_level": "متوافق بالكامل",
-        "explanation": "هذا العرض الوظيفي متوافق مع أحكام الشريعة الإسلامية. لا يحتوي على أنشطة محرمة مثل الربا أو بيع المحرمات.",
-        "recommendations": [
-            "تأكد من مواعيد الصلاة في بيئة العمل",
-            "اسأل عن السياسات المتعلقة بالإجازات الدينية"
-        ]
+async def check_sharia_compliance(data: JobOfferData = Body(...)):
+    # Use the job description from the frontend
+    job_offer_text = data.job_description
+    result = islamic_rag_job_verifier(job_offer_text)
+    return {
+        "content": result["content"],
+        "references": result["references"]
     }
-    
-    return mock_result
 
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+@app.post("/api/upload-audio")
+async def upload_audio(audio: UploadFile = File(...)):
+    # Ensure the audio directory exists
+    audio_dir = os.path.join("static", "audio")
+    os.makedirs(audio_dir, exist_ok=True)
+    # Save with a unique filename
+    file_ext = os.path.splitext(audio.filename)[1] or ".webm"
+    file_name = f"audio_{uuid.uuid4().hex}{file_ext}"
+    file_path = os.path.join(audio_dir, file_name)
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(audio.file, buffer)
+    return {"message": "Audio uploaded successfully", "file_path": f"/static/audio/{file_name}"}

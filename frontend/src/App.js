@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 function App() {
@@ -6,6 +6,10 @@ function App() {
   const [language, setLanguage] = useState('arabic');
   const [isRTL, setIsRTL] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedBlob, setRecordedBlob] = useState(null);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
 
   // Language content
   const content = {
@@ -1058,10 +1062,30 @@ function App() {
               </div>
               <h3 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>{t.interviewTrainer.simulator}</h3>
               <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mb-6`}>{t.interviewTrainer.question}</p>
-              
-              <button className={`${isDarkMode ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700' : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'} text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all`}>
-                {t.interviewTrainer.recordBtn} 🎤
-              </button>
+              <div className="mb-4">
+                {isRecording ? (
+                  <button
+                    onClick={stopRecording}
+                    className={`${isDarkMode ? 'bg-gradient-to-r from-pink-700 to-purple-700' : 'bg-gradient-to-r from-pink-500 to-purple-500'} text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all animate-pulse flex items-center justify-center gap-2`}
+                  >
+                    <span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                    {t.interviewTrainer.recordBtn}... <span>⏺️</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={startRecording}
+                    className={`${isDarkMode ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700' : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'} text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all`}
+                  >
+                    {t.interviewTrainer.recordBtn} 🎤
+                  </button>
+                )}
+              </div>
+              {recordedBlob && (
+                <div className="mt-4 flex flex-col items-center">
+                  <audio controls src={URL.createObjectURL(recordedBlob)} className="mb-2" />
+                  <span className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Recording saved. Ready to send.</span>
+                </div>
+              )}
             </div>
           </div>
           
@@ -1277,6 +1301,49 @@ function App() {
       case 'jobVerifier': return renderJobVerifier();
       case 'about': return renderAboutPage();
       default: return renderHomePage();
+    }
+  };
+
+  // Interview Trainer: Audio Recording Handlers
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new window.MediaRecorder(stream);
+      audioChunksRef.current = [];
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        setRecordedBlob(audioBlob);
+        // --- Upload audio to backend ---
+        try {
+          const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+          const formData = new FormData();
+          formData.append('audio', audioBlob, 'interview_answer.webm');
+          await fetch(`${backendUrl}/api/upload-audio`, {
+            method: 'POST',
+            body: formData
+          });
+        } catch (err) {
+          console.error('Audio upload failed:', err);
+        }
+      };
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start();
+      setIsRecording(true);
+      setRecordedBlob(null);
+    } catch (err) {
+      alert('Microphone access denied or not available.');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
     }
   };
 
