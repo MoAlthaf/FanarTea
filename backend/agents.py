@@ -273,16 +273,34 @@ def extract_info(response, job_description=None):
     except Exception as e:
         print("Fanar LLM extract_info also failed.", e)
 
-    # Final fallback: context-aware hardcoded result
-    haram_keywords = ["bartender", "alcohol", "wine", "beer", "pork", "casino", "gambling", "nightclub", "liquor", "interest", "riba"]
+    # Final fallback: context-aware hardcoded result with expanded haram/unethical keywords
+    haram_keywords = [
+        # Obvious haram
+        "bartender", "alcohol", "wine", "beer", "pork", "casino", "gambling", "nightclub", "liquor", "interest", "riba", "usury", "betting", "lottery", "porn", "escort", "prostitution", "adult", "strip club",
+        # Unethical/illegal/scam
+        "scam", "fraud", "pyramid scheme", "deceive", "fake", "counterfeit", "bribe", "corruption", "money laundering", "phishing", "identity theft", "exploit", "unethical", "deceptive", "cheat", "forgery", "embezzle", "kickback", "illegal", "unlawful", "unjust", "steal", "theft", "blackmail", "extortion"
+    ]
     job_text = (job_description or response_str or "").lower()
-    if any(word in job_text for word in haram_keywords):
+    for word in haram_keywords:
+        if word in job_text:
+            return {
+                "is_compliant": False,
+                "compliance_level": "Not compliant",
+                "explanation": f"This job involves activities prohibited or unethical in Islam, such as: '{word}'. Please avoid such roles.",
+                "recommendations": [
+                    "Seek alternative employment that does not involve prohibited or unethical activities.",
+                    "Consult a qualified Islamic scholar for further guidance."
+                ]
+            }
+    # If the LLM output is vague, empty, or does not mention compliance, flag as uncertain (optional: log for review)
+    vague_responses = ["not sure", "uncertain", "cannot determine", "no information", "unknown", "n/a", "none", "no data", "no details", "no explanation", "no comment", "no answer", "no response", "no info", "no sufficient info", "no sufficient information", "no sufficient details"]
+    if any(vague in response_str.lower() for vague in vague_responses):
         return {
             "is_compliant": False,
-            "compliance_level": "Not compliant",
-            "explanation": "This job involves activities prohibited in Islam, such as serving alcohol or working in a haram environment.",
+            "compliance_level": "Uncertain",
+            "explanation": "The job description or model response was too vague or incomplete to determine sharia compliance. Please review the job details carefully or consult a qualified Islamic scholar.",
             "recommendations": [
-                "Seek alternative employment that does not involve prohibited activities.",
+                "Request a clearer job description from the employer.",
                 "Consult a qualified Islamic scholar for further guidance."
             ]
         }
@@ -290,7 +308,7 @@ def extract_info(response, job_description=None):
     return {
         "is_compliant": True,
         "compliance_level": "Fully compatible",
-        "explanation": "This job offer is compliant with Islamic law principles. It does not contain prohibited activities such as interest-based transactions or selling prohibited items.",
+        "explanation": "This job offer is compliant with Islamic law principles. It does not contain prohibited or unethical activities such as interest-based transactions, scams, or selling prohibited items.",
         "recommendations": [
             "Ensure prayer times are accommodated in the work environment",
             "Ask about policies regarding religious holidays"
