@@ -345,6 +345,7 @@ function App() {
   const [cvStep, setCvStep] = useState(1);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [cvLanguage, setCvLanguage] = useState('arabic');
+  // Ensure all fields are always present in cvData
   const [cvData, setCvData] = useState({
     fullName: '',
     email: '',
@@ -354,8 +355,8 @@ function App() {
     jobTitle: '',
     skills: '',
     experience: '',
-    experiences: '',  
-    education: '',  
+    experiences: '',
+    education: '',
   });
   const [cvErrors, setCvErrors] = useState({});
   const [generatedCVFile, setGeneratedCVFile] = useState(null);
@@ -747,10 +748,97 @@ function App() {
     setCvStep(1);
     setSelectedTemplate(null);
     setCvLanguage('arabic');
-    setCvData({ fullName: '', jobTitle: '', skills: '', experience: '' });
+    setCvData({
+      fullName: '',
+      email: '',
+      phone: '',
+      address: '',
+      objective: '',
+      jobTitle: '',
+      skills: '',
+      experience: '',
+      experiences: '',
+      education: '',
+    });
     setCvErrors({});
     setGeneratedCVFile(null);
     setIsGeneratingCV(false);
+  };
+  // --- CV Generator Step Renderers ---
+  // Fallback: If these are missing, add basic implementations
+  const renderTemplateSelection = () => (
+    <div className="text-center">
+      <p className="mb-4">{cvStep === 1 ? (language === 'arabic' ? 'اختر قالب السيرة الذاتية' : 'Choose a CV template') : null}</p>
+      {/* Example templates, replace with your real template UI */}
+      <div className="flex justify-center gap-4">
+        {[{name: 'classic'}, {name: 'modern'}, {name: 'creative'}].map((tpl) => (
+          <button
+            key={tpl.name}
+            className={`px-6 py-3 rounded-xl border ${selectedTemplate && selectedTemplate.name === tpl.name ? 'bg-blue-500 text-white' : 'bg-gray-100'}`}
+            onClick={() => { setSelectedTemplate(tpl); setCvStep(2); }}
+          >
+            {tpl.name.charAt(0).toUpperCase() + tpl.name.slice(1)}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderLanguageSelection = () => (
+    <div className="text-center">
+      <p className="mb-4">{language === 'arabic' ? 'اختر لغة السيرة الذاتية' : 'Choose CV Language'}</p>
+      <div className="flex justify-center gap-4">
+        <button
+          className={`px-6 py-3 rounded-xl border ${cvLanguage === 'arabic' ? 'bg-blue-500 text-white' : 'bg-gray-100'}`}
+          onClick={() => { setCvLanguage('arabic'); setCvStep(3); }}
+        >
+          {language === 'arabic' ? 'العربية' : 'Arabic'}
+        </button>
+        <button
+          className={`px-6 py-3 rounded-xl border ${cvLanguage === 'english' ? 'bg-blue-500 text-white' : 'bg-gray-100'}`}
+          onClick={() => { setCvLanguage('english'); setCvStep(3); }}
+        >
+          {language === 'arabic' ? 'الإنجليزية' : 'English'}
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderCVForm = () => {
+    // Defensive: If template or language not selected, show a message
+    if (!selectedTemplate || !cvLanguage) {
+      return <div className="text-center text-red-500 font-semibold py-8">{language === 'arabic' ? 'يرجى اختيار القالب واللغة أولاً.' : 'Please select a template and language first.'}</div>;
+    }
+    // Example form, replace with your real form fields
+    return (
+      <form className="max-w-xl mx-auto space-y-4">
+        <input
+          className="w-full p-3 border rounded"
+          placeholder={cvLanguage === 'arabic' ? 'الاسم الكامل' : 'Full Name'}
+          value={cvData.fullName}
+          onChange={e => setCvData({ ...cvData, fullName: e.target.value })}
+        />
+        <input
+          className="w-full p-3 border rounded"
+          placeholder={cvLanguage === 'arabic' ? 'المسمى الوظيفي' : 'Job Title'}
+          value={cvData.jobTitle}
+          onChange={e => setCvData({ ...cvData, jobTitle: e.target.value })}
+        />
+        <input
+          className="w-full p-3 border rounded"
+          placeholder={cvLanguage === 'arabic' ? 'المهارات' : 'Skills'}
+          value={cvData.skills}
+          onChange={e => setCvData({ ...cvData, skills: e.target.value })}
+        />
+        <textarea
+          className="w-full p-3 border rounded"
+          placeholder={cvLanguage === 'arabic' ? 'الخبرة' : 'Experience'}
+          value={cvData.experience}
+          onChange={e => setCvData({ ...cvData, experience: e.target.value })}
+        />
+        {/* Add more fields as needed */}
+      </form>
+    );
   };
 
   const renderHomePage = () => (
@@ -979,8 +1067,214 @@ function App() {
   );
 
   const renderCVGenerator = () => {
-    // Fix: define cvContent at the top before using it
     const cvContent = language === 'arabic' ? content.arabic : content.english;
+    
+    // CV Template options
+    const templates = [
+      { id: 1, name: cvContent.cvGenerator.templates.classic, preview: '📄', color: 'blue' },
+      { id: 2, name: cvContent.cvGenerator.templates.modern, preview: '🎨', color: 'emerald' },
+      { id: 3, name: cvContent.cvGenerator.templates.creative, preview: '✨', color: 'purple' }
+    ];
+
+    // Step 1: Template Selection
+    const renderTemplateSelection = () => (
+      <div className="space-y-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">{cvContent.cvGenerator.step1Title}</h2>
+          <p className="text-gray-600">{cvContent.cvGenerator.step1Subtitle}</p>
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {templates.map((template) => (
+            <div
+              key={template.id}
+              onClick={() => {
+                setSelectedTemplate(template);
+                setCvStep(2);
+              }}
+              className={`relative p-8 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-105 backdrop-blur-sm border-2 ${
+                selectedTemplate?.id === template.id
+                  ? `border-${template.color}-500 bg-${template.color}-50/50 shadow-${template.color}/20`
+                  : 'border-gray-200 bg-white/60 hover:border-gray-300'
+              } shadow-lg hover:shadow-2xl`}
+            >
+              <div className="text-center">
+                <div className="text-6xl mb-4">{template.preview}</div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                  {template.name}
+                </h3>
+                <div className={`w-12 h-1 bg-gradient-to-r from-${template.color}-400 to-${template.color}-600 mx-auto rounded-full`}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+
+    // Step 2: Language Selection
+    const renderLanguageSelection = () => (
+      <div className="space-y-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">{cvContent.cvGenerator.step2Title}</h2>
+          <p className="text-gray-600">{cvContent.cvGenerator.step2Subtitle}</p>
+        </div>
+        
+        <div className="flex justify-center space-x-6 space-x-reverse">
+          <button
+            onClick={() => {
+              setCvLanguage('arabic');
+              setCvStep(3);
+            }}
+            className={`px-12 py-8 rounded-2xl text-xl font-semibold transition-all duration-300 backdrop-blur-sm border-2 ${
+              cvLanguage === 'arabic'
+                ? 'border-emerald-500 bg-emerald-50/50 text-emerald-700 shadow-emerald/20'
+                : 'border-gray-200 bg-white/60 text-gray-600 hover:border-emerald-300'
+            } shadow-lg hover:shadow-xl`}
+          >
+            <div className="text-4xl mb-2">🇸🇦</div>
+            العربية
+          </button>
+          
+          <button
+            onClick={() => {
+              setCvLanguage('english');
+              setCvStep(3);
+            }}
+            className={`px-12 py-8 rounded-2xl text-xl font-semibold transition-all duration-300 backdrop-blur-sm border-2 ${
+              cvLanguage === 'english'
+                ? 'border-blue-500 bg-blue-50/50 text-blue-700 shadow-blue/20'
+                : 'border-gray-200 bg-white/60 text-gray-600 hover:border-blue-300'
+            } shadow-lg hover:shadow-xl`}
+          >
+            <div className="text-4xl mb-2">🇺🇸</div>
+            English
+          </button>
+        </div>
+      </div>
+    );
+
+    // Step 3: CV Form
+    const renderCVForm = () => {
+      // Move these calculations outside JSX
+      const fileName = `${cvLanguage}_${selectedTemplate.name}.pdf`;
+      const fileUrl = `${process.env.REACT_APP_BACKEND_URL}/static/resumes/${fileName}`;
+
+      return (
+        <div className={`grid lg:grid-cols-2 gap-8 ${cvLanguage === 'arabic' ? 'rtl' : 'ltr'}`}>
+          {/* Form */}
+          <div className="space-y-6">
+            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6">
+                {cvContent.cvGenerator.step3Title}
+              </h3>
+
+              <div className="space-y-6">
+                {/* Full Name */}
+                <div>
+                  <label className="block font-semibold text-gray-700 mb-2">
+                    {cvContent.cvGenerator.fullName}
+                  </label>
+                  <input
+                    type="text"
+                    value={cvData.fullName}
+                    onChange={(e) => setCvData({ ...cvData, fullName: e.target.value })}
+                    className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all ${
+                      cvErrors.fullName ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
+                    }`}
+                    placeholder={cvContent.cvGenerator.fullNamePlaceholder}
+                  />
+                  {cvErrors.fullName && <p className="text-red-500 text-sm mt-1">{cvErrors.fullName}</p>}
+                </div>
+
+                {/* Job Title */}
+                <div>
+                  <label className="block font-semibold text-gray-700 mb-2">
+                    {cvContent.cvGenerator.jobTitle}
+                  </label>
+                  <input
+                    type="text"
+                    value={cvData.jobTitle}
+                    onChange={(e) => setCvData({ ...cvData, jobTitle: e.target.value })}
+                    className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all ${
+                      cvErrors.jobTitle ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
+                    }`}
+                    placeholder={cvContent.cvGenerator.jobTitlePlaceholder}
+                  />
+                  {cvErrors.jobTitle && <p className="text-red-500 text-sm mt-1">{cvErrors.jobTitle}</p>}
+                </div>
+
+                {/* Skills */}
+                <div>
+                  <label className="block font-semibold text-gray-700 mb-2">
+                    {cvContent.cvGenerator.skills}
+                  </label>
+                  <textarea
+                    value={cvData.skills}
+                    onChange={(e) => setCvData({ ...cvData, skills: e.target.value })}
+                    className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all resize-none h-32 ${
+                      cvErrors.skills ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
+                    }`}
+                    placeholder={cvContent.cvGenerator.skillsPlaceholder}
+                  />
+                  {cvErrors.skills && <p className="text-red-500 text-sm mt-1">{cvErrors.skills}</p>}
+                </div>
+
+                {/* Experience */}
+                <div>
+                  <label className="block font-semibold text-gray-700 mb-2">
+                    {cvContent.cvGenerator.experience}
+                  </label>
+                  <textarea
+                    value={cvData.experience}
+                    onChange={(e) => setCvData({ ...cvData, experience: e.target.value })}
+                    className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all resize-none h-40 ${
+                      cvErrors.experience ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
+                    }`}
+                    placeholder={cvContent.cvGenerator.experiencePlaceholder}
+                  />
+                  {cvErrors.experience && <p className="text-red-500 text-sm mt-1">{cvErrors.experience}</p>}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Live Preview */}
+          <div className="w-full h-[600px] rounded-lg overflow-hidden border shadow">
+            <iframe
+              src={fileUrl}
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              title="Live Resume Preview"
+            />
+          </div>
+        </div>
+      );
+    };
+
+
+    // Progress Steps
+    const renderProgressSteps = () => (
+      <div className="flex justify-center mb-8">
+        <div className="flex items-center space-x-4 space-x-reverse">
+          {[1, 2, 3].map((step) => (
+            <div key={step} className="flex items-center">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
+                cvStep >= step ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-500'
+              }`}>
+                {step}
+              </div>
+              {step < 3 && (
+                <div className={`w-16 h-1 mx-2 rounded transition-all ${
+                  cvStep > step ? 'bg-emerald-500' : 'bg-gray-200'
+                }`}></div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+
     return (
       <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900' : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'} py-12`}>
         <div className="container mx-auto px-6">
@@ -1059,7 +1353,6 @@ function App() {
       </div>
     );
   };
-
 
   const renderJobVerifier = () => (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-orange-900 to-red-900' : 'bg-gradient-to-br from-orange-50 to-red-50'} py-12`}>
