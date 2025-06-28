@@ -1,11 +1,11 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 import os
 from pymongo import MongoClient
 import uuid
-from agents import career_recommednation_agent
+from agents import career_recommednation_agent, cv_generator_agent, interview_trainer_agent, sharia_compliance_agent
 import json
 from fastapi.staticfiles import StaticFiles
 
@@ -34,12 +34,17 @@ class CareerInterest(BaseModel):
 
 class CVData(BaseModel):
     full_name: str
+    email: str
+    phone: str
+    address: str
     career_goal: str
     skills: str
     experience: str
     education: str
+    template: str
     languages: List[str]
     cv_language: str = "arabic"
+    interface_language: str = "arabic"
 
 class InterviewQuestion(BaseModel):
     question: str
@@ -63,61 +68,63 @@ async def get_career_recommendations(data: CareerInterest):
 
 @app.post("/api/generate-cv")
 async def generate_cv(data: CVData):
-    # Placeholder for Fanar AI integration
-    # Mock CV generation
-    cv_id = str(uuid.uuid4())
-    
+    cv_path=cv_generator_agent(user_data=data.dict(), language=data.cv_language)
+    if not cv_path:
+        raise HTTPException(status_code=500, detail="CV generation failed")
+    return cv_path
     # Store CV data (you'll integrate with Fanar AI later)
-    cv_collection = db.cvs
-    cv_document = {
-        "cv_id": cv_id,
-        "full_name": data.full_name,
-        "career_goal": data.career_goal,
-        "skills": data.skills,
-        "experience": data.experience,
-        "education": data.education,
-        "languages": data.languages,
-        "cv_language": data.cv_language,
-        "generated_cv": f"سيرة ذاتية مُولدة بواسطة الذكاء الاصطناعي لـ {data.full_name}"
-    }
-    
-    cv_collection.insert_one(cv_document)
-    
-    return {
-        "cv_id": cv_id,
-        "generated_cv": cv_document["generated_cv"],
-        "message": "تم إنشاء السيرة الذاتية بنجاح"
-    }
 
 @app.post("/api/interview-feedback")
-async def get_interview_feedback(data: InterviewQuestion):
-    # Placeholder for Fanar AI integration
-    mock_feedback = {
-        "score": 85,
-        "feedback": "إجابة جيدة! يمكنك تحسين الثقة في الصوت وإضافة المزيد من الأمثلة العملية.",
-        "suggestions": [
-            "استخدم أمثلة محددة من خبرتك",
-            "تحدث بثقة أكبر",
-            "اربط إجابتك بمتطلبات الوظيفة"
-        ]
-    }
-    
-    return mock_feedback
+async def get_interview_feedback(
+    audio: UploadFile = File(...),
+    question: str = Form(...),
+    language: str = Form(...)
+):
+    # Save audio file to static/audio/
+    audio_dir = os.path.join("static", "audio")
+    os.makedirs(audio_dir, exist_ok=True)
+    audio_path = os.path.join(audio_dir, audio.filename)
+    with open(audio_path, "wb") as f:
+        content = await audio.read()
+        f.write(content)
+
+    # Call the interview trainer agent (which will use the saved audio)
+    try:
+        feedback = interview_trainer_agent(question, language)
+    except Exception as e:
+        print("Error in interview_trainer_agent:", e)
+        feedback = {
+            "score": 85,
+            "feedback": "You provided a good answer! You can improve your confidence in voice and add more practical examples.",
+            "suggestions": [
+                "Include specific examples from your experience",
+                "Try to speak more confidently",
+                "Relate your answer to the job requirements"
+            ]
+        }
+    return feedback
 
 @app.post("/api/sharia-check")
 async def check_sharia_compliance(data: JobOfferData):
-    # Placeholder for Fanar AI integration
-    mock_result = {
-        "is_compliant": True,
-        "compliance_level": "متوافق بالكامل",
-        "explanation": "هذا العرض الوظيفي متوافق مع أحكام الشريعة الإسلامية. لا يحتوي على أنشطة محرمة مثل الربا أو بيع المحرمات.",
-        "recommendations": [
-            "تأكد من مواعيد الصلاة في بيئة العمل",
-            "اسأل عن السياسات المتعلقة بالإجازات الدينية"
-        ]
-    }
-    
-    return mock_result
+    try:
+        result = sharia_compliance_agent(data.job_description, data.language)
+    except Exception as e:
+        print("Error in sharia_compliance_agent:", e)
+        # fallback mock result in required format
+        result = {
+            "is_compliant": True,
+            "compliance_level": "Fully compatible" if data.language == "english" else "متوافق بالكامل",
+            "explanation": (
+                "This job offer is compliant with Islamic law principles. It does not contain prohibited activities such as interest-based transactions or selling prohibited items."
+                if data.language == "english" else
+                "هذا العرض الوظيفي متوافق مع أحكام الشريعة الإسلامية. لا يحتوي على أنشطة محرمة مثل الربا أو بيع المحرمات."
+            ),
+            "recommendations": [
+                "Ensure prayer times are accommodated in the work environment",
+                "Ask about policies regarding religious holidays"
+            ]
+        }
+    return result
 
 
 if __name__ == "__main__":

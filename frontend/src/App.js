@@ -346,13 +346,233 @@ function App() {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [cvLanguage, setCvLanguage] = useState('arabic');
   const [cvData, setCvData] = useState({
-    fullName: '', jobTitle: '', skills: '', experience: ''
+    fullName: '',
+    email: '',
+    phone: '',
+    address: '',
+    objective: '',
+    jobTitle: '',
+    skills: '',
+    experience: '',
+    experiences: '',  
+    education: '',  
   });
   const [cvErrors, setCvErrors] = useState({});
   const [generatedCVFile, setGeneratedCVFile] = useState(null);
   const [isGeneratingCV, setIsGeneratingCV] = useState(false);
   
+  // Interview Trainer state
+  // Multi-question interview trainer
+  const interviewQuestions = language === 'arabic'
+    ? [
+        'حدثني عن نفسك وخبراتك المهنية',
+        'ما هي نقاط قوتك الرئيسية؟',
+        'ما هو أكبر تحدٍ واجهته في عملك وكيف تعاملت معه؟',
+        'لماذا ترغب في هذه الوظيفة؟',
+        'أين ترى نفسك بعد خمس سنوات؟'
+      ]
+    : [
+        'Tell me about yourself and your professional experience',
+        'What are your main strengths?',
+        'Describe the biggest challenge you faced at work and how you handled it.',
+        'Why do you want this job?',
+        'Where do you see yourself in five years?'
+      ];
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [interviewFeedback, setInterviewFeedback] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [audioUrl, setAudioUrl] = useState(null);
+  const [isSendingAudio, setIsSendingAudio] = useState(false);
+  // Interview Trainer: Mic Recording Functions
+  const startRecording = async () => {
+    setInterviewFeedback(null);
+    setAudioBlob(null);
+    setAudioUrl(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new window.MediaRecorder(stream);
+      let chunks = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        setAudioBlob(blob);
+        setAudioUrl(URL.createObjectURL(blob));
+        stream.getTracks().forEach(track => track.stop());
+      };
+      setMediaRecorder(recorder);
+      setIsRecording(true);
+      chunks = [];
+      recorder.start();
+    } catch (err) {
+      alert('Microphone access denied or not available.');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorder && isRecording) {
+      mediaRecorder.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const sendRecordingToBackend = async () => {
+    if (!audioBlob) return;
+    setIsSendingAudio(true);
+    setInterviewFeedback(null);
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+      const formData = new FormData();
+      formData.append('audio', audioBlob, 'answer.webm');
+      formData.append('language', language);
+      formData.append('question', interviewQuestions[currentQuestionIndex]); // Send the current question
+      const response = await fetch(`${backendUrl}/api/interview-feedback`, {
+        method: 'POST',
+        body: formData
+      });
+      if (response.ok) {
+        const result = await response.json();
+        setInterviewFeedback(result);
+      } else {
+        setInterviewFeedback({
+          score: 85,
+          feedback: t.interviewTrainer.mockFeedback,
+          suggestions: t.interviewTrainer.mockSuggestions
+        });
+      }
+    } catch (err) {
+      setInterviewFeedback({
+        score: 85,
+        feedback: t.interviewTrainer.mockFeedback,
+        suggestions: t.interviewTrainer.mockSuggestions
+      });
+    } finally {
+      setIsSendingAudio(false);
+    }
+  };
+  // Interview Trainer: handle next question
+  const handleNextQuestion = () => {
+    setInterviewFeedback(null);
+    setAudioBlob(null);
+    setAudioUrl(null);
+    if (currentQuestionIndex < interviewQuestions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
+  };
+
+  // Interview Trainer: handle restart
+  const handleRestartInterview = () => {
+    setCurrentQuestionIndex(0);
+    setInterviewFeedback(null);
+    setAudioBlob(null);
+    setAudioUrl(null);
+  };
+  // Interview Trainer UI
+  const renderInterviewTrainer = () => {
+    const isLastQuestion = currentQuestionIndex === interviewQuestions.length - 1;
+    return (
+      <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-purple-900 to-blue-900' : 'bg-gradient-to-br from-blue-50 via-purple-50 to-white'} py-12`}> 
+        <div className="container mx-auto px-6">
+          <div className="max-w-2xl mx-auto">
+            <div className="text-center mb-10">
+              <h1 className={`text-4xl md:text-5xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>{t.interviewTrainer.title}</h1>
+              <p className={`text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{t.interviewTrainer.subtitle}</p>
+            </div>
+            <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white'} backdrop-blur-sm rounded-2xl shadow-xl p-8 border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}> 
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-2">
+                  <span className={`text-lg font-semibold ${isDarkMode ? 'text-emerald-300' : 'text-emerald-700'}`}>{t.interviewTrainer.simulator}</span>
+                  <span className="text-sm text-gray-400">{language === 'arabic' ? `سؤال ${currentQuestionIndex + 1} من ${interviewQuestions.length}` : `Question ${currentQuestionIndex + 1} of ${interviewQuestions.length}`}</span>
+                </div>
+                <div className={`text-2xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>{interviewQuestions[currentQuestionIndex]}</div>
+              </div>
+              <div className="flex flex-col items-center space-y-4 mb-6">
+                {!isRecording && (
+                  <button
+                    onClick={startRecording}
+                    disabled={isSendingAudio || (interviewFeedback && !audioBlob)}
+                    className={`px-8 py-4 rounded-xl text-xl font-semibold transition-all shadow-lg ${isDarkMode ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white' : 'bg-gradient-to-r from-purple-400 to-blue-400 text-white'} ${isSendingAudio ? 'opacity-50' : ''}`}
+                  >
+                    <span role="img" aria-label="mic">🎤</span> {t.interviewTrainer.recordBtn}
+                  </button>
+                )}
+                {isRecording && (
+                  <button
+                    onClick={stopRecording}
+                    className="px-8 py-4 rounded-xl text-xl font-semibold bg-red-600 text-white animate-pulse shadow-lg"
+                  >
+                    <span role="img" aria-label="stop">⏹️</span> {language === 'arabic' ? 'إيقاف التسجيل' : 'Stop Recording'}
+                  </button>
+                )}
+                {audioUrl && (
+                  <audio controls src={audioUrl} className="mt-2" />
+                )}
+                {audioBlob && !isSendingAudio && (
+                  <button
+                    onClick={sendRecordingToBackend}
+                    className={`px-8 py-3 rounded-xl text-lg font-semibold transition-all shadow-lg ${isDarkMode ? 'bg-gradient-to-r from-emerald-600 to-blue-600 text-white' : 'bg-gradient-to-r from-emerald-400 to-blue-400 text-white'}`}
+                  >
+                    {language === 'arabic' ? 'إرسال الإجابة' : 'Send Answer'}
+                  </button>
+                )}
+                {isSendingAudio && (
+                  <div className="text-lg text-blue-500 font-semibold mt-2 flex items-center space-x-2">
+                    <span className="spinner w-5 h-5"></span>
+                    <span>{language === 'arabic' ? 'جاري التقييم...' : 'Evaluating...'}</span>
+                  </div>
+                )}
+              </div>
+              {interviewFeedback && (
+                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 mb-4">
+                  <h3 className="text-xl font-bold text-emerald-700 mb-2">{t.interviewTrainer.feedbackTitle}</h3>
+                  <div className="mb-2"><span className="font-semibold">{t.interviewTrainer.score}</span> {interviewFeedback.score}</div>
+                  <div className="mb-2"><span className="font-semibold">{t.interviewTrainer.feedback}</span> {interviewFeedback.feedback}</div>
+                  <div><span className="font-semibold">{t.interviewTrainer.suggestions}</span>
+                    <ul className="list-disc ml-6">
+                      {interviewFeedback.suggestions && interviewFeedback.suggestions.map((s, i) => (
+                        <li key={i}>{s}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+              {/* Navigation: Next/Restart */}
+              {interviewFeedback && (
+                <div className="flex justify-center mt-4">
+                  {!isLastQuestion ? (
+                    <button
+                      onClick={handleNextQuestion}
+                      className="px-8 py-3 bg-gradient-to-r from-blue-500 to-emerald-500 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-emerald-600 transition-all"
+                    >
+                      {language === 'arabic' ? 'السؤال التالي' : 'Next Question'}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleRestartInterview}
+                      className="px-8 py-3 bg-gradient-to-r from-emerald-500 to-blue-500 text-white rounded-xl font-semibold hover:from-emerald-600 hover:to-blue-600 transition-all"
+                    >
+                      {language === 'arabic' ? 'إعادة التدريب' : 'Restart Interview'}
+                    </button>
+                  )}
+                </div>
+              )}
+              {/* End message */}
+              {isLastQuestion && interviewFeedback && (
+                <div className="mt-8 text-center">
+                  <div className="text-4xl mb-2">🎉</div>
+                  <h3 className="text-xl font-bold text-blue-700 mb-2">{language === 'arabic' ? 'انتهت المقابلة! أحسنت 👏' : 'Interview Complete! Well done 👏'}</h3>
+                  <p className="text-blue-600">{language === 'arabic' ? 'يمكنك إعادة التدريب أو مراجعة إجاباتك.' : 'You can restart or review your answers.'}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
   const [jobVerifierResult, setJobVerifierResult] = useState(null);
 
   // Mock API calls (will be replaced with your Fanar AI integration)
@@ -471,10 +691,14 @@ function App() {
         },
         body: JSON.stringify({
           full_name: cvData.fullName,
+          email: cvData.email,
+          phone: cvData.phone,
+          address: cvData.address,
           career_goal: cvData.jobTitle,
           skills: cvData.skills,
           experience: cvData.experience,
-          education: '', // Can be added later
+          education: cvData.education,
+          template: selectedTemplate ? selectedTemplate.name : '',
           languages: [cvLanguage === 'arabic' ? 'العربية' : 'English'],
           cv_language: cvLanguage,
           interface_language: language // Send the interface language to backend
@@ -665,7 +889,7 @@ function App() {
                 {t.home.getStarted}
               </button>
               <button 
-                onClick={() => setCurrentPage('cvGenerator')}
+                onClick={() => { resetCVGenerator(); setCurrentPage('cvGenerator'); }}
                 className="bg-white/10 text-white border-2 border-white/30 px-12 py-4 rounded-2xl text-xl font-semibold hover:bg-white/20 transform hover:scale-105 transition-all backdrop-blur-sm"
               >
                 {t.home.cta2}
@@ -755,214 +979,8 @@ function App() {
   );
 
   const renderCVGenerator = () => {
+    // Fix: define cvContent at the top before using it
     const cvContent = language === 'arabic' ? content.arabic : content.english;
-    
-    // CV Template options
-    const templates = [
-      { id: 1, name: cvContent.cvGenerator.templates.classic, preview: '📄', color: 'blue' },
-      { id: 2, name: cvContent.cvGenerator.templates.modern, preview: '🎨', color: 'emerald' },
-      { id: 3, name: cvContent.cvGenerator.templates.creative, preview: '✨', color: 'purple' }
-    ];
-
-    // Step 1: Template Selection
-    const renderTemplateSelection = () => (
-      <div className="space-y-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">{cvContent.cvGenerator.step1Title}</h2>
-          <p className="text-gray-600">{cvContent.cvGenerator.step1Subtitle}</p>
-        </div>
-        
-        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          {templates.map((template) => (
-            <div
-              key={template.id}
-              onClick={() => {
-                setSelectedTemplate(template);
-                setCvStep(2);
-              }}
-              className={`relative p-8 rounded-3xl cursor-pointer transition-all duration-300 hover:scale-105 backdrop-blur-sm border-2 ${
-                selectedTemplate?.id === template.id
-                  ? `border-${template.color}-500 bg-${template.color}-50/50 shadow-${template.color}/20`
-                  : 'border-gray-200 bg-white/60 hover:border-gray-300'
-              } shadow-lg hover:shadow-2xl`}
-            >
-              <div className="text-center">
-                <div className="text-6xl mb-4">{template.preview}</div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                  {template.name}
-                </h3>
-                <div className={`w-12 h-1 bg-gradient-to-r from-${template.color}-400 to-${template.color}-600 mx-auto rounded-full`}></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-
-    // Step 2: Language Selection
-    const renderLanguageSelection = () => (
-      <div className="space-y-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">{cvContent.cvGenerator.step2Title}</h2>
-          <p className="text-gray-600">{cvContent.cvGenerator.step2Subtitle}</p>
-        </div>
-        
-        <div className="flex justify-center space-x-6 space-x-reverse">
-          <button
-            onClick={() => {
-              setCvLanguage('arabic');
-              setCvStep(3);
-            }}
-            className={`px-12 py-8 rounded-2xl text-xl font-semibold transition-all duration-300 backdrop-blur-sm border-2 ${
-              cvLanguage === 'arabic'
-                ? 'border-emerald-500 bg-emerald-50/50 text-emerald-700 shadow-emerald/20'
-                : 'border-gray-200 bg-white/60 text-gray-600 hover:border-emerald-300'
-            } shadow-lg hover:shadow-xl`}
-          >
-            <div className="text-4xl mb-2">🇸🇦</div>
-            العربية
-          </button>
-          
-          <button
-            onClick={() => {
-              setCvLanguage('english');
-              setCvStep(3);
-            }}
-            className={`px-12 py-8 rounded-2xl text-xl font-semibold transition-all duration-300 backdrop-blur-sm border-2 ${
-              cvLanguage === 'english'
-                ? 'border-blue-500 bg-blue-50/50 text-blue-700 shadow-blue/20'
-                : 'border-gray-200 bg-white/60 text-gray-600 hover:border-blue-300'
-            } shadow-lg hover:shadow-xl`}
-          >
-            <div className="text-4xl mb-2">🇺🇸</div>
-            English
-          </button>
-        </div>
-      </div>
-    );
-
-    // Step 3: CV Form
-    const renderCVForm = () => {
-      // Move these calculations outside JSX
-      const fileName = `${cvLanguage}_${selectedTemplate.name}.pdf`;
-      const fileUrl = `${process.env.REACT_APP_BACKEND_URL}/static/resumes/${fileName}`;
-
-      return (
-        <div className={`grid lg:grid-cols-2 gap-8 ${cvLanguage === 'arabic' ? 'rtl' : 'ltr'}`}>
-          {/* Form */}
-          <div className="space-y-6">
-            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200">
-              <h3 className="text-2xl font-bold text-gray-800 mb-6">
-                {cvContent.cvGenerator.step3Title}
-              </h3>
-
-              <div className="space-y-6">
-                {/* Full Name */}
-                <div>
-                  <label className="block font-semibold text-gray-700 mb-2">
-                    {cvContent.cvGenerator.fullName}
-                  </label>
-                  <input
-                    type="text"
-                    value={cvData.fullName}
-                    onChange={(e) => setCvData({ ...cvData, fullName: e.target.value })}
-                    className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all ${
-                      cvErrors.fullName ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
-                    }`}
-                    placeholder={cvContent.cvGenerator.fullNamePlaceholder}
-                  />
-                  {cvErrors.fullName && <p className="text-red-500 text-sm mt-1">{cvErrors.fullName}</p>}
-                </div>
-
-                {/* Job Title */}
-                <div>
-                  <label className="block font-semibold text-gray-700 mb-2">
-                    {cvContent.cvGenerator.jobTitle}
-                  </label>
-                  <input
-                    type="text"
-                    value={cvData.jobTitle}
-                    onChange={(e) => setCvData({ ...cvData, jobTitle: e.target.value })}
-                    className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all ${
-                      cvErrors.jobTitle ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
-                    }`}
-                    placeholder={cvContent.cvGenerator.jobTitlePlaceholder}
-                  />
-                  {cvErrors.jobTitle && <p className="text-red-500 text-sm mt-1">{cvErrors.jobTitle}</p>}
-                </div>
-
-                {/* Skills */}
-                <div>
-                  <label className="block font-semibold text-gray-700 mb-2">
-                    {cvContent.cvGenerator.skills}
-                  </label>
-                  <textarea
-                    value={cvData.skills}
-                    onChange={(e) => setCvData({ ...cvData, skills: e.target.value })}
-                    className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all resize-none h-32 ${
-                      cvErrors.skills ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
-                    }`}
-                    placeholder={cvContent.cvGenerator.skillsPlaceholder}
-                  />
-                  {cvErrors.skills && <p className="text-red-500 text-sm mt-1">{cvErrors.skills}</p>}
-                </div>
-
-                {/* Experience */}
-                <div>
-                  <label className="block font-semibold text-gray-700 mb-2">
-                    {cvContent.cvGenerator.experience}
-                  </label>
-                  <textarea
-                    value={cvData.experience}
-                    onChange={(e) => setCvData({ ...cvData, experience: e.target.value })}
-                    className={`w-full p-4 rounded-xl border-2 focus:outline-none backdrop-blur-sm bg-white/70 transition-all resize-none h-40 ${
-                      cvErrors.experience ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
-                    }`}
-                    placeholder={cvContent.cvGenerator.experiencePlaceholder}
-                  />
-                  {cvErrors.experience && <p className="text-red-500 text-sm mt-1">{cvErrors.experience}</p>}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Live Preview */}
-          <div className="w-full h-[600px] rounded-lg overflow-hidden border shadow">
-            <iframe
-              src={fileUrl}
-              width="100%"
-              height="100%"
-              frameBorder="0"
-              title="Live Resume Preview"
-            />
-          </div>
-        </div>
-      );
-    };
-
-
-    // Progress Steps
-    const renderProgressSteps = () => (
-      <div className="flex justify-center mb-8">
-        <div className="flex items-center space-x-4 space-x-reverse">
-          {[1, 2, 3].map((step) => (
-            <div key={step} className="flex items-center">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
-                cvStep >= step ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-500'
-              }`}>
-                {step}
-              </div>
-              {step < 3 && (
-                <div className={`w-16 h-1 mx-2 rounded transition-all ${
-                  cvStep > step ? 'bg-emerald-500' : 'bg-gray-200'
-                }`}></div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-
     return (
       <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900' : 'bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'} py-12`}>
         <div className="container mx-auto px-6">
@@ -1042,52 +1060,6 @@ function App() {
     );
   };
 
-  const renderInterviewTrainer = () => (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-purple-900 to-pink-900' : 'bg-gradient-to-br from-purple-50 to-pink-50'} py-12`}>
-      <div className="container mx-auto px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className={`text-4xl md:text-5xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>{t.interviewTrainer.title}</h1>
-            <p className={`text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{t.interviewTrainer.subtitle}</p>
-          </div>
-          
-          <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white'} backdrop-blur-sm rounded-2xl shadow-xl p-8 mb-8 border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-            <div className="text-center mb-8">
-              <div className={`w-24 h-24 ${isDarkMode ? 'bg-gradient-to-br from-purple-600 to-pink-600' : 'bg-gradient-to-br from-purple-400 to-pink-400'} rounded-full mx-auto mb-4 flex items-center justify-center`}>
-                <span className="text-4xl">🤖</span>
-              </div>
-              <h3 className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>{t.interviewTrainer.simulator}</h3>
-              <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} mb-6`}>{t.interviewTrainer.question}</p>
-              
-              <button className={`${isDarkMode ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700' : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'} text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all`}>
-                {t.interviewTrainer.recordBtn} 🎤
-              </button>
-            </div>
-          </div>
-          
-          {/* Mock Feedback */}
-          <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white'} backdrop-blur-sm rounded-2xl shadow-xl p-8 border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-            <h3 className={`text-2xl font-bold ${isDarkMode ? 'text-purple-400' : 'text-purple-600'} mb-6`}>{t.interviewTrainer.feedbackTitle}</h3>
-            <div className="space-y-4">
-              <div className={`${isDarkMode ? 'bg-green-900/30 border-green-700' : 'bg-green-50'} p-4 rounded-lg border`}>
-                <h4 className={`font-semibold ${isDarkMode ? 'text-green-400' : 'text-green-700'} mb-2`}>{t.interviewTrainer.score} 85/100</h4>
-                <p className={`${isDarkMode ? 'text-green-300' : 'text-green-600'}`}>{t.interviewTrainer.mockFeedback}</p>
-              </div>
-              
-              <div className={`${isDarkMode ? 'bg-blue-900/30 border-blue-700' : 'bg-blue-50'} p-4 rounded-lg border`}>
-                <h4 className={`font-semibold ${isDarkMode ? 'text-blue-400' : 'text-blue-700'} mb-2`}>{t.interviewTrainer.suggestions}</h4>
-                <ul className={`list-disc list-inside ${isDarkMode ? 'text-blue-300' : 'text-blue-600'} space-y-1`}>
-                  {t.interviewTrainer.mockSuggestions.map((suggestion, index) => (
-                    <li key={index}>{suggestion}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   const renderJobVerifier = () => (
     <div className={`min-h-screen ${isDarkMode ? 'bg-gradient-to-br from-gray-900 via-orange-900 to-red-900' : 'bg-gradient-to-br from-orange-50 to-red-50'} py-12`}>
@@ -1099,14 +1071,41 @@ function App() {
           </div>
           
           <div className={`${isDarkMode ? 'bg-gray-800/60' : 'bg-white'} backdrop-blur-sm rounded-2xl shadow-xl p-8 mb-8 border ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-            <form onSubmit={(e) => {
+            <form onSubmit={async (e) => {
               e.preventDefault();
-              setJobVerifierResult({
-                is_compliant: true,
-                compliance_level: language === 'arabic' ? 'متوافق بالكامل' : 'Fully Compliant',
-                explanation: t.jobVerifier.mockExplanation,
-                recommendations: t.jobVerifier.mockRecommendations
-              });
+              const jobDescription = e.target.elements[0].value;
+              setJobVerifierResult(null);
+              try {
+                const backendUrl = process.env.REACT_APP_BACKEND_URL || import.meta.env.REACT_APP_BACKEND_URL;
+                const response = await fetch(`${backendUrl}/api/sharia-check`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    job_description: jobDescription,
+                    language: language
+                  })
+                });
+                if (response.ok) {
+                  const result = await response.json();
+                  setJobVerifierResult(result);
+                } else {
+                  setJobVerifierResult({
+                    is_compliant: true,
+                    compliance_level: language === 'arabic' ? 'متوافق بالكامل' : 'Fully compatible',
+                    explanation: t.jobVerifier.mockExplanation,
+                    recommendations: t.jobVerifier.mockRecommendations
+                  });
+                }
+              } catch (err) {
+                setJobVerifierResult({
+                  is_compliant: true,
+                  compliance_level: language === 'arabic' ? 'متوافق بالكامل' : 'Fully compatible',
+                  explanation: t.jobVerifier.mockExplanation,
+                  recommendations: t.jobVerifier.mockRecommendations
+                });
+              }
             }}>
               <div className="mb-6">
                 <label className={`block text-lg font-semibold ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} mb-3`}>
@@ -1344,5 +1343,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

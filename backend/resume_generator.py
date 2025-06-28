@@ -5,7 +5,7 @@ from docx2pdf import convert
 
 def generate_cv(template_name: str, user_data: dict, language: str) -> str:
     BASE_DIR = Path(__file__).resolve().parent
-    template_path = BASE_DIR / "templates" / f"{template_name}_{language[:2]}.docx"
+    template_path = BASE_DIR / "templates" / f"{template_name}_{language}.docx"
     print("path: ",template_path)
     if not template_path.exists():
         raise FileNotFoundError(f"Template not found: {template_path}")
